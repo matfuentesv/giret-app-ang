@@ -25,7 +25,7 @@ COPY --from=build /app/dist/giret-app-ang/browser /usr/share/nginx/html
 #COPY nginx.conf /etc/nginx/nginx.conf
 
 # Exponer el puerto 80 para el servidor
-EXPOSE 80
+EXPOSE 4200
 
 # Comando para ejecutar nginx
 CMD ["nginx", "-g", "daemon off;"]
