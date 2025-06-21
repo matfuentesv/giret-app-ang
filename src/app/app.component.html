@@ -1,5 +1,10 @@
-<app-header></app-header>
-<main>
+
+<!-- Mostrar el sidebar solo si no estás en la ruta raíz -->
+<app-sidebar *ngIf="router.url !== '/'"></app-sidebar>
+
+<!-- Área de contenido -->
+<div class="content">
   <router-outlet></router-outlet>
-</main>
+</div>
+
 <app-footer></app-footer>

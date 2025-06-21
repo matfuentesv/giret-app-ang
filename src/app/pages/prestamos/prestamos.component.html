@@ -1,0 +1,42 @@
+<div class="container py-4">
+  <h1 class="mb-4">Gestión de Préstamos</h1>
+  <div class="row mb-3">
+    <div class="col-md-6 mb-2">
+      <input type="text" class="form-control" placeholder="Buscar por recurso o solicitante">
+    </div>
+    <div class="col-md-6 d-flex gap-2">
+      <select class="form-select">
+        <option>Filtrar por estado</option>
+        <option>Activo</option>
+        <option>Atrasado</option>
+        <option>Completado</option>
+      </select>
+      <button class="btn btn-primary"><i class="fas fa-plus me-2"></i>Registrar Préstamo</button>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th>Recurso</th>
+          <th>Solicitante</th>
+          <th>Fecha Préstamo</th>
+          <th>Fecha Devolución</th>
+          <th>Estado</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Proyector Epson L200<br><small class="text-muted">EPSL200-123456</small></td>
+          <td>Maria Rodriguez</td>
+          <td>01/06/2025</td>
+          <td>10/06/2025</td>
+          <td><span class="badge bg-danger">Atrasado</span></td>
+          <td class="text-center"><button class="btn btn-link text-success"><i class="fas fa-undo-alt"></i></button></td>
+        </tr>
+        <!-- Más filas similares -->
+      </tbody>
+    </table>
+  </div>
+</div>
