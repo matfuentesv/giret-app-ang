@@ -9,12 +9,13 @@ import { DetallesPrestamoComponent } from './pages/detalles-prestamo/detalles-pr
 
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent},
-  { path:"inventario",component: InventarioComponent},
-  { path:"prestamo",component: PrestamosComponent},
-  { path:"detalle",component: DetallesPrestamoComponent},
-  { path:"reporte",component: ReportesComponent},
-  { path:"dashboard",component: DashboardComponent},
+  { path: '',  redirectTo: 'home', pathMatch: 'full'},
+  { path:'home',component: HomeComponent},
+  { path:'inventario',component: InventarioComponent},
+  { path:'prestamo',component: PrestamosComponent},
+  { path:'detalle',component: DetallesPrestamoComponent},
+  { path:'reporte',component: ReportesComponent},
+  { path:'dashboard',component: DashboardComponent},
 ];
 
 @NgModule({
