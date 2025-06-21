@@ -1,0 +1,6 @@
+/* src/app/sidebar/sidebar.component.css */
+.sidebar-custom {
+  width: 240px; /* Ancho fijo para tu sidebar */
+  flex-shrink: 0; /* Impide que el sidebar se encoja si el espacio es limitado */
+  /* NO NECESITAS min-height: 100vh; aquí. El Flexbox principal lo manejará. */
+}

@@ -1,12 +1,9 @@
 
 
+<div class="d-flex flex-grow-1"> <app-sidebar *ngIf="router.url !== '/home'"></app-sidebar>
 
-
-
-<div class="d-flex">
-  <app-sidebar *ngIf="router.url !== '/home'"></app-sidebar>
-  <main class="flex-grow-1 p-4">
-    <router-outlet></router-outlet>
+  <main class="main-content-area flex-grow-1"> <div class="container-fluid py-4">
+      <router-outlet></router-outlet> </div>
   </main>
 </div>
 
