@@ -20,12 +20,12 @@ FROM nginx:alpine
 
 # Copiar los archivos estáticos construidos desde el contenedor de construcción anterior
 COPY --from=build /app/dist/giret-app-ang/browser /usr/share/nginx/html
-
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Copiar archivo de configuración de Nginx
 #COPY nginx.conf /etc/nginx/nginx.conf
 
 # Exponer el puerto 80 para el servidor
-EXPOSE 4200
+EXPOSE 80
 
 # Comando para ejecutar nginx
 CMD ["nginx", "-g", "daemon off;"]
