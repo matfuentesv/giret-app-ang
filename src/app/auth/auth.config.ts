@@ -2,14 +2,10 @@ import { PassedInitialConfig } from 'angular-auth-oidc-client';
 
 export const authConfig: PassedInitialConfig = {
   config: {
-    authority: 'https://us-east-1-9tsb64erp.auth.us-east-1.amazoncognito.com',
-    redirectUrl: window.location.origin,
-    postLogoutRedirectUri: window.location.origin,
-    clientId: '3tspci7ln4fgtdhincrulufljh',  // <- Reemplaza con el real
-    scope: 'openid profile email',  // <- Puedes agregar más scopes si lo necesitas
-    responseType: 'code',
-    silentRenew: true,
-    useRefreshToken: true,
-    renewTimeBeforeTokenExpiresInSeconds: 30,
+    authority: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_w5FGnXUk2',
+    redirectUrl: 'https://d84l1y8p4kdic.cloudfront.net',
+    clientId: '7nec8rbfm2j07ng6o9tvqhepda',
+    scope: 'phone openid email',
+    responseType: 'code'
   }
 }

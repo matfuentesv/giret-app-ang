@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import {FooterComponent} from './shared/footer/footer.component';
 import {HeaderComponent} from './shared/header/header.component';
 import { SidebarComponent } from './shared/sidebar/sidebar.component';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import {OidcSecurityService} from 'angular-auth-oidc-client';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +13,18 @@ import { CommonModule } from '@angular/common';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'giret-app-ang';
-   constructor(public router: Router) {}
+  private readonly oidcSecurityService = inject(OidcSecurityService);
+  protected readonly router = inject(Router);
+
+  constructor() {}
+
+  ngOnInit(): void {
+    this.oidcSecurityService.checkAuth().subscribe(({ isAuthenticated }) => {
+      if (isAuthenticated) {
+        this.router.navigate(['/dashboard']);
+      }
+    });
+  }
 }

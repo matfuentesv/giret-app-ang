@@ -1,5 +1,4 @@
 import {Component, inject, OnInit} from '@angular/core';
-import {AuthService} from '../../core/services/auth/auth.service.ts.service';
 import {OidcSecurityService} from 'angular-auth-oidc-client';
 import {NgIf} from '@angular/common';
 
