@@ -1,25 +1,33 @@
-<aside class="bg-dark text-white p-3" style="width: 240px; min-height: 100vh">
-    <div class="d-flex align-items-center mb-4">
-      <i class="fas fa-cogs fa-lg text-info"></i>
-      <span class="ms-2 fw-bold">GIRET</span>
-    </div>
-    <ul class="nav flex-column">
-      <li class="nav-item mb-2">
-        <a routerLink="/dashboard" routerLinkActive="active" class="nav-link text-white"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a>
-      </li>
-      <li class="nav-item mb-2">
-        <a routerLink="/inventario" routerLinkActive="active" class="nav-link text-white"><i class="fas fa-boxes me-2"></i>Inventario</a>
-      </li>
-      <li class="nav-item mb-2">
-        <a routerLink="/prestamos" routerLinkActive="active" class="nav-link text-white"><i class="fas fa-boxes me-2"></i>Préstamos</a>
-      </li>
-      <li class="nav-item mb-2">
-        <a routerLink="/reporte" routerLinkActive="active" class="nav-link text-white"><i class="fas fa-chart-pie me-2"></i>Reportes</a>
-      </li>
-      <li class="nav-item mt-4">
-        <a routerLink="/" class="nav-link text-white"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a>
-      </li>
-    </ul>
+<aside class="sidebar-custom bg-dark text-white">
+  <div class="sidebar-header d-flex align-items-center px-3 py-4 border-bottom border-secondary">
+    <i class="fas fa-cogs fa-lg text-info"></i>
+    <span class="ms-2 fw-bold fs-5">GIRET</span>
+  </div>
+  <ul class="nav flex-column mt-3">
+    <li class="nav-item">
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-link-custom">
+        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+      </a>
+    </li>
+    <li class="nav-item">
+      <a routerLink="/inventario" routerLinkActive="active" class="nav-link-custom">
+        <i class="fas fa-boxes me-2"></i>Inventario
+      </a>
+    </li>
+    <li class="nav-item">
+      <a routerLink="/prestamo" routerLinkActive="active" class="nav-link-custom">
+        <i class="fas fa-hand-holding-usd me-2"></i>Préstamos
+      </a>
+    </li>
+    <li class="nav-item">
+      <a routerLink="/reporte" routerLinkActive="active" class="nav-link-custom">
+        <i class="fas fa-chart-pie me-2"></i>Reportes
+      </a>
+    </li>
+    <li class="nav-item mt-4">
+      <a routerLink="/" class="nav-link-custom text-danger">
+        <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+      </a>
+    </li>
+  </ul>
 </aside>
-
-
