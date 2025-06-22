@@ -6,6 +6,7 @@ import { PrestamosComponent } from './pages/prestamos/prestamos.component';
 import { ReportesComponent } from './pages/reportes/reportes.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { DetallesPrestamoComponent } from './pages/detalles-prestamo/detalles-prestamo.component';
+import {AuthGuard} from './auth/auth.guard';
 
 
 export const routes: Routes = [
@@ -15,7 +16,7 @@ export const routes: Routes = [
   { path:'prestamo',component: PrestamosComponent},
   { path:'detalle',component: DetallesPrestamoComponent},
   { path:'reporte',component: ReportesComponent},
-  { path:'dashboard',component: DashboardComponent},
+  { path:'dashboard',component: DashboardComponent,canActivate: [AuthGuard] },
 ];
 
 @NgModule({
