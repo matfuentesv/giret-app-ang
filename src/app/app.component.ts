@@ -14,7 +14,7 @@ import {OidcSecurityService} from 'angular-auth-oidc-client';
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
-  title = 'giret-app-ang';
+   title = 'giret-app-ang';
   private readonly oidcSecurityService = inject(OidcSecurityService);
   protected readonly router = inject(Router);
 
@@ -23,7 +23,16 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.oidcSecurityService.checkAuth().subscribe(({ isAuthenticated }) => {
       if (isAuthenticated) {
+        // Si está autenticado, navega directamente al dashboard
         this.router.navigate(['/dashboard']);
+      } else {
+        // Si no está autenticado y no está en la ruta 'home' (o si 'home' no requiere AuthGuard),
+        // asegúrate de que el usuario sea dirigido a 'home' o a la página de login.
+        // Aquí no necesitamos una acción explícita si la ruta por defecto ya es 'home'
+        // y no estás en /dashboard
+        if (this.router.url === '/') { // Si la URL es la raíz y no está autenticado, redirige a home
+           this.router.navigate(['/home']);
+        }
       }
     });
   }
