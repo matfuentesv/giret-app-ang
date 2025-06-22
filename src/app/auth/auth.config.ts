@@ -6,7 +6,7 @@ export const authConfig: PassedInitialConfig = {
     clientId: '7nec8rbfm2j07ng6o9tvqhepda',
     scope: 'openid email phone',
     responseType: 'code',
-    redirectUrl: 'http://localhost:4200',
+    redirectUrl: 'http://localhost:4200/dashboard',
     postLogoutRedirectUri: 'http://localhost:4200/home',
     silentRenew: true,
     useRefreshToken: true,
