@@ -5,19 +5,14 @@
       <h2 class="mt-2">GIRET</h2>
       <p class="text-muted">Gestión Inteligente de Recursos Tecnológicos</p>
     </div>
-    <form>
-      <div class="mb-3">
-        <label for="email" class="form-label">Correo Electrónico</label>
-        <input type="email" class="form-control" id="email" value="g.otarola@duocuc.cl">
-      </div>
-      <div class="mb-3">
-        <label for="password" class="form-label">Contraseña</label>
-        <input type="password" class="form-control" id="password" value="••••••••••">
-      </div>
-      <button type="submit" class="btn btn-primary w-100">Ingresar</button>
-      <div class="text-center mt-3">
-        <a href="#" class="text-decoration-none">¿Olvidaste tu contraseña?</a>
-      </div>
-    </form>
+
+    <div *ngIf="!isAuthenticated; else logoutBlock">
+      <button (click)="login()" class="btn btn-primary w-100">Iniciar sesión con Cognito</button>
+    </div>
+
+    <ng-template #logoutBlock>
+      <p class="text-center">Sesión iniciada</p>
+      <button (click)="logout()" class="btn btn-danger w-100">Cerrar sesión</button>
+    </ng-template>
   </div>
 </div>
