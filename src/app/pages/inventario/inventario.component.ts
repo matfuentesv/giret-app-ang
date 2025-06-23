@@ -2,10 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { CognitoService } from '../../auth/cognito.service';
 import { Subscription } from 'rxjs';
+import { DetallesPrestamoComponent } from '../detalles-prestamo/detalles-prestamo.component';
 
 @Component({
   selector: 'app-inventario',
-  imports: [CommonModule],
+  imports: [CommonModule,DetallesPrestamoComponent],
   templateUrl: './inventario.component.html',
   styleUrl: './inventario.component.css'
 })
@@ -31,4 +32,6 @@ export class InventarioComponent implements OnInit {
       }
     );
   }
+
+
 }
