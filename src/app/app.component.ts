@@ -23,14 +23,10 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.oidcSecurityService.checkAuth().subscribe(({ isAuthenticated }) => {
       if (isAuthenticated) {
-        // Si está autenticado, navega directamente al dashboard
+        // Si esta autenticado, navega directamente al dashboard
         this.router.navigate(['/dashboard']);
       } else {
-        // Si no está autenticado y no está en la ruta 'home' (o si 'home' no requiere AuthGuard),
-        // asegúrate de que el usuario sea dirigido a 'home' o a la página de login.
-        // Aquí no necesitamos una acción explícita si la ruta por defecto ya es 'home'
-        // y no estás en /dashboard
-        if (this.router.url === '/') { // Si la URL es la raíz y no está autenticado, redirige a home
+        if (this.router.url === '/') { 
            this.router.navigate(['/home']);
         }
       }

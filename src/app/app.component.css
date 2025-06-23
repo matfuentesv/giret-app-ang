@@ -1,11 +1,8 @@
-/* Asegúrate que html y body ocupen el 100% (esto también se puede hacer con Bootstrap classes en index.html) */
 html, body {
   height: 100%;
   margin: 0;
 }
 
-/* Estilos para el área de contenido principal */
 .main-content-area {
-  background-color: #f8f9fa; /* Fondo claro para el área de contenido */
-  /* Puedes añadir más estilos si es necesario */
+  background-color: #f8f9fa; 
 }
