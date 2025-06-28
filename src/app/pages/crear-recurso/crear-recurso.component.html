@@ -1,48 +1,65 @@
-<form>
-    <div class="mb-3">
-        <label for="Categoria" class="form-label">Categoria</label>
-        <select class="form-select" id="estado">
-            <option selected>Seleccione una Categoria</option>
-            <option value="Computacion">Computacion</option>
-            <option value="Impresoras">Impresoras</option>
-            <option value="Telefonia">Telefonia</option>
-            <option value="Perifericos">Perifericos</option>
-        </select>
-    </div>
-    <div class="mb-3">
-        <label for="estado" class="form-label">Estado</label>
-        <select class="form-select" id="estado">
-            <option selected>Seleccione un estado</option>
-            <option value="enBodega">En Bodega</option>
-            <option value="prestado">Prestado</option>
-            <option value="asignado">Asignado</option>
-            <option value="enMantenimiento">En Mantenimiento</option>
-        </select>
-    </div>
-    <div class="mb-3">
-        <label for="modelo" class="form-label">Modelo</label>
-        <input type="text" class="form-control" id="modelo" placeholder="Ej: Notebook Dell XPS 15">
-    </div>
-    <div class="mb-3">
-        <label for="descripcion" class="form-label">Descripción</label>
-        <textarea class="form-control" id="descripcion" rows="3"
-            placeholder="Ej: Intel Core i7, 16GB RAM, 512GB SSD"></textarea>
-    </div>
-    <div class="mb-3">
-        <label for="numeroSerie" class="form-label">N° de Serie</label>
-        <input type="text" class="form-control" id="numeroSerie" placeholder="Ej: DXPS15-987654">
-    </div>
+<form (ngSubmit)="onSubmit()" #recursoForm="ngForm">
+  <div class="mb-3">
+    <label for="categoria" class="form-label">Categoría</label>
+    <select id="categoria" name="categoria" class="form-select" [(ngModel)]="newRecurso.categoria" required>
+      <option value="" disabled selected>Selecciona una Categoría</option>
+      <option value="Computacion">Computación</option>
+      <option value="Impresoras">Impresoras</option>
+      <option value="Telefonia">Telefonía</option>
+      <option value="Perifericos">Periféricos</option>
+      <option value="Audio y Video">Audio y Video</option>
+      <option value="Redes">Redes</option>
+      <option value="Software">Software</option>
+      <option value="Otros">Otros</option>
+    </select>
+  </div>
 
-    <div class="mb-3">
-        <label for="fechaCompra" class="form-label">Fecha de Compra</label>
-        <input type="date" class="form-control" id="fechaCompra">
-    </div>
-    <div class="mb-3">
-        <label for="vencimientoGarantia" class="form-label">Fecha de Vencimiento de Garantía</label>
-        <input type="date" class="form-control" id="vencimientoGarantia">
-    </div>
-    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-primary">Guardar Recurso</button>
-    </div>
+  <div class="mb-3">
+    <label for="modelo" class="form-label">Modelo</label>
+    <input type="text" id="modelo" name="modelo" class="form-control" [(ngModel)]="newRecurso.modelo" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="descripcion" class="form-label">Descripción</label>
+    <textarea id="descripcion" name="descripcion" class="form-control" [(ngModel)]="newRecurso.descripcion" rows="3" required></textarea>
+  </div>
+
+  <div class="mb-3">
+    <label for="numeroSerie" class="form-label">N° de Serie</label>
+    <input type="text" id="numeroSerie" name="numeroSerie" class="form-control" [(ngModel)]="newRecurso.numeroSerie" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="fechaCompra" class="form-label">Fecha de Compra</label>
+    <input type="date" id="fechaCompra" name="fechaCompra" class="form-control" [(ngModel)]="newRecurso.fechaCompra" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="fechaVencimientoGarantia" class="form-label">Fecha de Vencimiento de Garantía</label>
+    <input type="date" id="fechaVencimientoGarantia" name="fechaVencimientoGarantia" class="form-control" [(ngModel)]="newRecurso.fechaVencimientoGarantia" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="emailUsuario" class="form-label">Email de Usuario (asignado)</label>
+    <input type="email" id="emailUsuario" name="emailUsuario" class="form-control" [(ngModel)]="newRecurso.emailUsuario" placeholder="ej. usuario@empresa.cl">
+  </div>
+
+  <div class="mb-3">
+    <label for="estado" class="form-label">Estado</label>
+    <select id="estado" name="estado" class="form-select" [(ngModel)]="newRecurso.estado" required>
+      <option value="En Bodega">En Bodega</option>
+      <option value="Prestado">Prestado</option>
+      <option value="Asignado">Asignado</option>
+      <option value="En Mantenimiento">En Mantenimiento</option>
+      <option value="Inactivo">Inactivo</option>
+      <option value="Activo">Activo</option>
+    </select>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+    <button type="submit" class="btn btn-primary" [disabled]="!recursoForm.form.valid">
+      <i class="fas fa-save me-2"></i>Guardar Recurso
+    </button>
+  </div>
 </form>
