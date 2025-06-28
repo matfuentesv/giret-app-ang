@@ -1,0 +1,48 @@
+<form>
+    <div class="mb-3">
+        <label for="Categoria" class="form-label">Categoria</label>
+        <select class="form-select" id="estado">
+            <option selected>Seleccione una Categoria</option>
+            <option value="Computacion">Computacion</option>
+            <option value="Impresoras">Impresoras</option>
+            <option value="Telefonia">Telefonia</option>
+            <option value="Perifericos">Perifericos</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="estado" class="form-label">Estado</label>
+        <select class="form-select" id="estado">
+            <option selected>Seleccione un estado</option>
+            <option value="enBodega">En Bodega</option>
+            <option value="prestado">Prestado</option>
+            <option value="asignado">Asignado</option>
+            <option value="enMantenimiento">En Mantenimiento</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="modelo" class="form-label">Modelo</label>
+        <input type="text" class="form-control" id="modelo" placeholder="Ej: Notebook Dell XPS 15">
+    </div>
+    <div class="mb-3">
+        <label for="descripcion" class="form-label">Descripción</label>
+        <textarea class="form-control" id="descripcion" rows="3"
+            placeholder="Ej: Intel Core i7, 16GB RAM, 512GB SSD"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="numeroSerie" class="form-label">N° de Serie</label>
+        <input type="text" class="form-control" id="numeroSerie" placeholder="Ej: DXPS15-987654">
+    </div>
+
+    <div class="mb-3">
+        <label for="fechaCompra" class="form-label">Fecha de Compra</label>
+        <input type="date" class="form-control" id="fechaCompra">
+    </div>
+    <div class="mb-3">
+        <label for="vencimientoGarantia" class="form-label">Fecha de Vencimiento de Garantía</label>
+        <input type="date" class="form-control" id="vencimientoGarantia">
+    </div>
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar Recurso</button>
+    </div>
+</form>

@@ -1,15 +1,11 @@
-<!-- Título -->
 <h1 class="h2 fw-bold text-dark mb-4">Gestión de Préstamos</h1>
 
-<!-- Buscador y filtros -->
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center mb-4 gap-3">
-  <!-- Buscador -->
   <div class="input-group w-100 w-md-auto" style="max-width: 100%;">
     <span class="input-group-text"><i class="fas fa-search"></i></span>
     <input type="text" class="form-control" placeholder="Buscar por recurso o solicitante...">
   </div>
 
-  <!-- Filtros y botón -->
   <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto justify-content-md-end">
     <select class="form-select w-100 w-sm-auto">
       <option selected>Filtrar por estado...</option>
@@ -17,13 +13,12 @@
       <option>Atrasado</option>
       <option>Completado</option>
     </select>
-    <button class="btn btn-primary w-100 w-sm-auto text-nowrap">
+    <button class="btn btn-primary w-100 w-sm-auto text-nowrap" data-bs-toggle="modal" data-bs-target="#crearPrestamoModal">
       <i class="fas fa-plus me-2"></i>Registrar Préstamo
     </button>
   </div>
 </div>
 
-<!-- Tabla de préstamos -->
 <div class="card shadow-sm border-0">
   <div class="table-responsive">
     <table class="table table-hover table-borderless align-middle mb-0">
@@ -85,5 +80,18 @@
         </tr>
       </tbody>
     </table>
+  </div>
+</div>
+
+<div class="modal fade" id="crearPrestamoModal" tabindex="-1" aria-labelledby="crearPrestamoModalLabel" aria-hidden="true">
+  <div class="modal-dialog"> <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="crearPrestamoModalLabel">Registrar Nuevo Préstamo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <app-crear-prestamo></app-crear-prestamo>
+      </div>
+      </div>
   </div>
 </div>

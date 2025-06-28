@@ -1,6 +1,6 @@
 /* Estructura general del sidebar */
 .sidebar-custom {
-  width: 240px;
+  width: 250px;
   min-height: 100vh;
   background-color: #1f1f2e;
   display: flex;
@@ -24,6 +24,7 @@
 .nav-link-custom:hover {
   background-color: #2d2d44;
   color: #ffffff;
+  
 }
 
 /* Activo */

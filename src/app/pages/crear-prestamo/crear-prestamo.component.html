@@ -1,0 +1,36 @@
+<form>
+  <div class="mb-3">
+    <label for="recursoAsociado" class="form-label">Recurso Asociado</label>
+    <select class="form-select" id="recursoAsociado">
+      <option selected>Seleccione un recurso</option>
+      <option value="proyectorEpson">Proyector Epson L200 (EPSL200-123456)</option>
+      <option value="notebookHP">Notebook HP #NH4531 (NH4531-987123)</option>
+      <option value="tabletSamsung">Tablet Samsung (TSG851-445566)</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label for="solicitante" class="form-label">Solicitante</label>
+    <input type="text" class="form-control" id="solicitante" placeholder="Nombre completo del solicitante">
+  </div>
+  <div class="mb-3">
+    <label for="fechaPrestamo" class="form-label">Fecha Préstamo</label>
+    <input type="date" class="form-control" id="fechaPrestamo">
+  </div>
+  <div class="mb-3">
+    <label for="fechaDevolucion" class="form-label">Fecha Devolución</label>
+    <input type="date" class="form-control" id="fechaDevolucion">
+  </div>
+  <div class="mb-3">
+    <label for="estadoPrestamo" class="form-label">Estado</label>
+    <select class="form-select" id="estadoPrestamo">
+      <option selected>Seleccione un estado</option>
+      <option value="activo">Activo</option>
+      <option value="atrasado">Atrasado</option>
+      <option value="completado">Completado</option>
+    </select>
+  </div>
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+    <button type="submit" class="btn btn-primary">Guardar Préstamo</button>
+  </div>
+</form>

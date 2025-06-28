@@ -23,14 +23,13 @@
           <option>Asignado</option>
           <option>En Mantenimiento</option>
         </select>
-        <button class="btn btn-primary w-100 w-sm-auto text-nowrap">
+        <button class="btn btn-primary w-100 w-sm-auto text-nowrap" data-bs-toggle="modal" data-bs-target="#crearRecursoModal">
           <i class="fas fa-plus me-2"></i>Agregar Recurso
         </button>
       </div>
     </div>
   </div>
 </div>
-
 <div class="row g-4">
   <div class="col-12">
     <div class="card shadow-sm h-100 border-0">
@@ -110,5 +109,19 @@
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="modal fade" id="crearRecursoModal" tabindex="-1" aria-labelledby="crearRecursoModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="crearRecursoModalLabel">Agregar Nuevo Recurso</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <app-crear-recurso></app-crear-recurso>
+      </div>
+      </div>
   </div>
 </div>

@@ -3,10 +3,11 @@ import { Component, OnInit } from '@angular/core';
 import { CognitoService } from '../../auth/cognito.service';
 import { Subscription } from 'rxjs';
 import { DetallesPrestamoComponent } from '../detalles-prestamo/detalles-prestamo.component';
+import { CrearRecursoComponent } from '../crear-recurso/crear-recurso.component';
 
 @Component({
   selector: 'app-inventario',
-  imports: [CommonModule,DetallesPrestamoComponent],
+  imports: [CommonModule,DetallesPrestamoComponent,CrearRecursoComponent],
   templateUrl: './inventario.component.html',
   styleUrl: './inventario.component.css'
 })
