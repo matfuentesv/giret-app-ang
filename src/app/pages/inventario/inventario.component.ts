@@ -4,10 +4,11 @@ import { CognitoService } from '../../auth/cognito.service';
 import { Subscription } from 'rxjs';
 import { DetallesPrestamoComponent } from '../detalles-prestamo/detalles-prestamo.component';
 import { CrearRecursoComponent } from '../crear-recurso/crear-recurso.component';
+import { EditarRecursoComponent } from '../editar-recurso/editar-recurso.component';
 
 @Component({
   selector: 'app-inventario',
-  imports: [CommonModule,DetallesPrestamoComponent,CrearRecursoComponent],
+  imports: [CommonModule,DetallesPrestamoComponent,CrearRecursoComponent,EditarRecursoComponent],
   templateUrl: './inventario.component.html',
   styleUrl: './inventario.component.css'
 })

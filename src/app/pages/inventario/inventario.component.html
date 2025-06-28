@@ -58,7 +58,7 @@
                   <button class="btn btn-link text-primary" data-bs-toggle="modal" data-bs-target="#detalleRecursoModal">
                     <i class="fas fa-eye"></i>
                   </button>
-                  <button class="btn btn-link text-secondary"><i class="fas fa-edit"></i></button>
+                  <button class="btn btn-link text-secondary" data-bs-toggle="modal" data-bs-target="#editarRecursoModal"><i class="fas fa-edit"></i></button>
                 </td>
               </tr>
               <tr>
@@ -71,7 +71,7 @@
                   <button class="btn btn-link text-primary" data-bs-toggle="modal" data-bs-target="#detalleRecursoModal">
                     <i class="fas fa-eye"></i>
                   </button>
-                  <button class="btn btn-link text-secondary"><i class="fas fa-edit"></i></button>
+                  <button class="btn btn-link text-secondary" data-bs-toggle="modal" data-bs-target="#editarRecursoModal"><i class="fas fa-edit"></i></button>
                 </td>
               </tr>
               <tr>
@@ -84,7 +84,7 @@
                   <button class="btn btn-link text-primary" data-bs-toggle="modal" data-bs-target="#detalleRecursoModal">
                     <i class="fas fa-eye"></i>
                   </button>
-                  <button class="btn btn-link text-secondary"><i class="fas fa-edit"></i></button>
+                  <button class="btn btn-link text-secondary" data-bs-toggle="modal" data-bs-target="#editarRecursoModal"><i class="fas fa-edit"></i></button>
                 </td>
               </tr>
             </tbody>
@@ -121,6 +121,20 @@
       </div>
       <div class="modal-body">
         <app-crear-recurso></app-crear-recurso>
+      </div>
+      </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editarRecursoModal" tabindex="-1" aria-labelledby="editarRecursoModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editarRecursoModalLabel">Editar Recurso</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <app-editar-recurso></app-editar-recurso>
       </div>
       </div>
   </div>
