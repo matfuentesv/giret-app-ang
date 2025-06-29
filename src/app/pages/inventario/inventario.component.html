@@ -30,12 +30,11 @@
           name="selectedEstado"
         >
           <option value="Filtrar por estado">Filtrar por estado</option>
-          <option value="Activo">Activo</option>
-          <option value="En Bodega">En Bodega</option>
-          <option value="Prestado">Prestado</option>
-          <option value="Asignado">Asignado</option>
-          <option value="En Mantenimiento">En Mantenimiento</option>
-          <option value="Inactivo">Inactivo</option>
+          <option value="bodega">En Bodega</option>
+          <option value="prestado">Prestado</option>
+          <option value="asignado">Asignado</option>
+          <option value="mantenimiento">En Mantenimiento</option>
+          <option value="eliminado">Eliminado</option>
         </select>
         <button class="btn btn-primary w-100 w-sm-auto text-nowrap" data-bs-toggle="modal" data-bs-target="#crearRecursoModal">
           <i class="fas fa-plus me-2"></i>Agregar Recurso
@@ -72,12 +71,11 @@
                 <td>{{ recurso.numeroSerie }}</td>
                 <td>
                   <span class="badge" [ngClass]="{
-                    'bg-success': recurso.estado === 'Activo',
-                    'bg-dark': recurso.estado === 'En Bodega',
-                    'bg-warning': recurso.estado === 'Prestado',
-                    'bg-primary': recurso.estado === 'Asignado',
-                    'bg-info': recurso.estado === 'En Mantenimiento',
-                    'bg-secondary': recurso.estado === 'Inactivo'
+                    'bg-success': recurso.estado === 'bodega',
+                    'bg-warning': recurso.estado === 'prestado',
+                    'bg-primary': recurso.estado === 'asignado',
+                    'bg-info': recurso.estado === 'mantenimiento',
+                    'bg-secondary': recurso.estado === 'eliminado'
                   }">{{ recurso.estado }}</span>
                 </td>
                 <td class="text-center">

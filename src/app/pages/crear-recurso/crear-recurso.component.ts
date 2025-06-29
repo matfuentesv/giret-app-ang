@@ -69,7 +69,7 @@ export class CrearRecursoComponent {
       fechaCompra: '',
       fechaVencimientoGarantia: '',
       emailUsuario: '',
-      estado: 'En Bodega',
+      estado: 'bodega',
       categoria: ''
     };
   }
