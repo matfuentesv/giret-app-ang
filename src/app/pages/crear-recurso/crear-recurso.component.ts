@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ResourceService, Recurso } from '../../services/resource.service';
+import { Subscription } from 'rxjs';
+import { CognitoService } from '../../auth/cognito.service';
 
 @Component({
   selector: 'app-crear-recurso',
@@ -9,7 +11,7 @@ import { ResourceService, Recurso } from '../../services/resource.service';
   templateUrl: './crear-recurso.component.html',
   styleUrl: './crear-recurso.component.css'
 })
-export class CrearRecursoComponent {
+export class CrearRecursoComponent implements OnInit{
 // Objeto que se vinculará al formulario para capturar los datos del nuevo recurso
   newRecurso: Recurso = {
     modelo: '',
@@ -25,7 +27,7 @@ export class CrearRecursoComponent {
   // Evento que se emitirá cuando se cree un recurso exitosamente
   @Output() resourceCreated = new EventEmitter<void>();
 
-  constructor(private resourceService: ResourceService) {} // Inyecta el ResourceService
+  constructor(private resourceService: ResourceService,private cognitoService: CognitoService) {} // Inyecta el ResourceService
 
   /**
    * Maneja el envío del formulario.
@@ -72,5 +74,32 @@ export class CrearRecursoComponent {
       estado: 'bodega',
       categoria: ''
     };
+  }
+
+    userEmail: string | null = null;
+    private userAttributesSubscription: Subscription | undefined;
+  
+    
+  
+  ngOnInit(): void {
+    this.userAttributesSubscription = this.cognitoService.getUserAttributes().subscribe(
+      attributes => {
+        if (attributes) {
+          this.userEmail = attributes['email'];
+
+          // ✅ Aquí haces que el email quede dentro del objeto del formulario
+          this.newRecurso.emailUsuario = this.userEmail;
+
+        } else {
+          this.userEmail = null;
+          this.newRecurso.emailUsuario = '';
+        }
+      },
+      error => {
+        console.error('Error al obtener atributos del usuario en el componente:', error);
+        this.userEmail = null;
+        this.newRecurso.emailUsuario = '';
+      }
+    );
   }
 }
