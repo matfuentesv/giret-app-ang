@@ -1,3 +1,4 @@
+// src/app/pages/dashboard/dashboard.component.ts
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
@@ -33,12 +34,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   estadoCounts: EstadoCount[] = [];
   private estadoCountsSubscription: Subscription | undefined;
 
+  // --- Propiedades para el gráfico de pastel (Chart.js con ng2-charts) ---
   public pieChartData: ChartData<'pie', number[], string> = {
     labels: [],
     datasets: [{
       data: [],
-      backgroundColor: [],
-      borderColor: [],
+      backgroundColor: [], // Estos se llenarán dinámicamente
+      borderColor: [],     // Estos se llenarán dinámicamente
       borderWidth: 1
     }]
   };
@@ -60,14 +62,24 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   };
 
+  // Definimos explícitamente el tipo como la cadena literal 'pie'
   public pieChartType: 'pie' = 'pie';
   public pieChartLegend = true;
+
+  // Define un mapeo de estados a colores
+  private estadoColorMap: { [key: string]: { backgroundColor: string, borderColor: string } } = {
+    'eliminado': { backgroundColor: 'rgba(220, 53, 69, 0.7)', borderColor: 'rgba(220, 53, 69, 1)' }, // Rojo intenso
+    'asignado': { backgroundColor: 'rgba(40, 167, 69, 0.7)', borderColor: 'rgba(40, 167, 69, 1)' },   // Verde
+    'prestado': { backgroundColor: 'rgba(255, 193, 7, 0.7)', borderColor: 'rgba(255, 193, 7, 1)' },    // Amarillo
+    'enMantenimiento': { backgroundColor: 'rgba(108, 117, 125, 0.7)', borderColor: 'rgba(108, 117, 125, 1)' }, // Gris
+    'enBodega': { backgroundColor: 'rgba(0, 123, 255, 0.7)', borderColor: 'rgba(0, 123, 255, 1)' }, // Azul (ejemplo)
+  };
+
 
   constructor(
     private cognitoService: CognitoService,
     private dashboardService: DashboardService
   ) {
-    // ¡NUEVO CÓDIGO AQUÍ!
     // Registra los componentes necesarios de Chart.js
     Chart.register(PieController, ArcElement, Tooltip, Legend);
   }
@@ -128,30 +140,38 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Prepara los datos obtenidos del backend (estadoCounts) para el formato que Chart.js necesita.
+   */
   private prepareChartData(): void {
     if (this.estadoCounts && this.estadoCounts.length > 0) {
       this.pieChartData.labels = this.estadoCounts.map(item => item.estado.charAt(0).toUpperCase() + item.estado.slice(1));
 
+      const backgroundColors: string[] = [];
+      const borderColors: string[] = [];
+
+      this.estadoCounts.forEach(item => {
+        const normalizedEstado = item.estado.toLowerCase();
+        const colors = this.estadoColorMap[normalizedEstado];
+
+        if (colors) {
+          backgroundColors.push(colors.backgroundColor);
+          borderColors.push(colors.borderColor);
+        } else {
+          // Color por defecto si el estado no está en el mapa
+          console.warn(`Color no definido para el estado: ${item.estado}. Usando color por defecto.`);
+          backgroundColors.push('rgba(200, 200, 200, 0.7)');
+          borderColors.push('rgba(200, 200, 200, 1)');
+        }
+      });
+
       this.pieChartData.datasets[0].data = this.estadoCounts.map(item => item.cantidad);
-      this.pieChartData.datasets[0].backgroundColor = [
-          'rgba(255, 99, 132, 0.7)',
-          'rgba(54, 162, 235, 0.7)',
-          'rgba(255, 206, 86, 0.7)',
-          'rgba(75, 192, 192, 0.7)',
-          'rgba(153, 102, 255, 0.7)',
-          'rgba(255, 159, 64, 0.7)'
-      ];
-      this.pieChartData.datasets[0].borderColor = [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)'
-      ];
+      this.pieChartData.datasets[0].backgroundColor = backgroundColors;
+      this.pieChartData.datasets[0].borderColor = borderColors;
       this.pieChartData.datasets[0].borderWidth = 1;
 
     } else {
+      // Limpiar los datos del gráfico si no hay 'estadoCounts'
       this.pieChartData = {
         labels: [],
         datasets: [{
