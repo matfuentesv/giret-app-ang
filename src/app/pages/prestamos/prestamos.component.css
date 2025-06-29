@@ -1,0 +1,23 @@
+/* src/app/pages/prestamos/prestamos.component.css */
+
+/* ... (otros estilos existentes en este archivo) ... */
+
+.prestamos-table-scroll-container {
+  max-height: 750px; /* Ajusta esta altura máxima según lo necesites */
+  overflow-y: auto;  /* Habilita el scroll vertical cuando el contenido excede la altura */
+  /* padding-right: 15px; Opcional: para evitar que el scrollbar se superponga al contenido si no está ya en el table-responsive */
+}
+
+/* Opcional: Estilo para el scrollbar si quieres personalizarlo (Webkit browsers) */
+.prestamos-table-scroll-container::-webkit-scrollbar {
+  width: 8px; /* Ancho del scrollbar */
+}
+
+.prestamos-table-scroll-container::-webkit-scrollbar-thumb {
+  background-color: #ccc; /* Color del "pulgar" del scrollbar */
+  border-radius: 4px; /* Bordes redondeados del "pulgar" */
+}
+
+.prestamos-table-scroll-container::-webkit-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* Color del track del scrollbar */
+}

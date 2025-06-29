@@ -1,0 +1,19 @@
+.recursos-table-scroll-container {
+  max-height: 650px; /* Ajusta esta altura máxima según lo necesites */
+  overflow-y: auto;  /* Habilita el scroll vertical cuando el contenido excede la altura */
+  /* padding-right: 15px; Opcional: para evitar que el scrollbar se superponga al contenido */
+}
+
+/* Opcional: Estilos para personalizar la barra de desplazamiento (para navegadores Webkit como Chrome, Safari) */
+.recursos-table-scroll-container::-webkit-scrollbar {
+  width: 8px; /* Ancho del scrollbar */
+}
+
+.recursos-table-scroll-container::-webkit-scrollbar-thumb {
+  background-color: #ccc; /* Color del "pulgar" del scrollbar */
+  border-radius: 4px; /* Bordes redondeados del "pulgar" */
+}
+
+.recursos-table-scroll-container::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* Color del track del scrollbar */
+}

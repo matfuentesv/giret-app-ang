@@ -1,0 +1,48 @@
+
+.loans-due-scroll-container {
+  max-height: 400px; /* Define la altura máxima de la sección */
+  overflow-y: auto;  /* Habilita el scroll vertical cuando el contenido excede la altura */
+  padding-right: 15px; /* Ajusta el padding para que el scrollbar no se superponga al contenido */
+}
+
+/* Opcional: Estilo para el scrollbar si quieres personalizarlo (Webkit browsers) */
+.loans-due-scroll-container::-webkit-scrollbar {
+  width: 8px; /* Ancho del scrollbar */
+}
+
+.loans-due-scroll-container::-webkit-scrollbar-thumb {
+  background-color: #ccc; /* Color del "pulgar" del scrollbar */
+  border-radius: 4px; /* Bordes redondeados del "pulgar" */
+}
+
+.loans-due-scroll-container::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* Color del track del scrollbar */
+}
+
+.estado-detalle-scroll-container {
+  max-height: 250px; /* Ajusta esta altura máxima según necesites para la tabla */
+  overflow-y: auto;  /* Habilita el scroll vertical cuando el contenido excede la altura */
+  padding-right: 15px; /* Ajusta el padding para que el scrollbar no se superponga al contenido */
+  margin-top: 15px; /* Añade un pequeño margen superior si es necesario para separar del gráfico */
+}
+
+/* Opcional: Estilo para el scrollbar si quieres personalizarlo (Webkit browsers) */
+.estado-detalle-scroll-container::-webkit-scrollbar {
+  width: 8px; /* Ancho del scrollbar */
+}
+
+.estado-detalle-scroll-container::-webkit-scrollbar-thumb {
+  background-color: #ccc; /* Color del "pulgar" del scrollbar */
+  border-radius: 4px; /* Bordes redondeados del "pulgar" */
+}
+
+.estado-detalle-scroll-container::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* Color del track del scrollbar */
+}
+
+.chart-wrapper {
+  max-width: 350px; /* Define el ancho máximo del contenedor del gráfico */
+  margin: 0 auto;   /* Centra el gráfico horizontalmente */
+  /* Puedes agregar un max-height si el gráfico también se estira verticalmente */
+  /* max-height: 300px; */
+}

@@ -4,11 +4,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { CognitoService } from '../../auth/cognito.service';
 import { Subscription } from 'rxjs';
-import { DashboardService, DashboardData, EstadoCount } from '../../services/dashboard.service';
+import { DashboardService, DashboardData, EstadoCount, LoanDue } from '../../services/dashboard.service';
 
 // Importaciones específicas para ng2-charts
 import { BaseChartDirective } from 'ng2-charts';
-// Importa los componentes de Chart.js que necesitas
 import { Chart, ChartOptions, ChartData, ArcElement, Tooltip, Legend, PieController } from 'chart.js';
 
 
@@ -34,13 +33,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
   estadoCounts: EstadoCount[] = [];
   private estadoCountsSubscription: Subscription | undefined;
 
+  loansDue: LoanDue[] = []; // Asegúrate de que esta propiedad esté declarada e inicializada
+  private loansDueSubscription: Subscription | undefined;
+
   // --- Propiedades para el gráfico de pastel (Chart.js con ng2-charts) ---
   public pieChartData: ChartData<'pie', number[], string> = {
     labels: [],
     datasets: [{
       data: [],
-      backgroundColor: [], // Estos se llenarán dinámicamente
-      borderColor: [],     // Estos se llenarán dinámicamente
+      backgroundColor: [],
+      borderColor: [],
       borderWidth: 1
     }]
   };
@@ -62,17 +64,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   };
 
-  // Definimos explícitamente el tipo como la cadena literal 'pie'
   public pieChartType: 'pie' = 'pie';
   public pieChartLegend = true;
 
   // Define un mapeo de estados a colores
   private estadoColorMap: { [key: string]: { backgroundColor: string, borderColor: string } } = {
-    'eliminado': { backgroundColor: 'rgba(220, 53, 69, 0.7)', borderColor: 'rgba(220, 53, 69, 1)' }, // Rojo intenso
-    'asignado': { backgroundColor: 'rgba(40, 167, 69, 0.7)', borderColor: 'rgba(40, 167, 69, 1)' },   // Verde
-    'prestado': { backgroundColor: 'rgba(255, 193, 7, 0.7)', borderColor: 'rgba(255, 193, 7, 1)' },    // Amarillo
-    'enMantenimiento': { backgroundColor: 'rgba(108, 117, 125, 0.7)', borderColor: 'rgba(108, 117, 125, 1)' }, // Gris
-    'enBodega': { backgroundColor: 'rgba(0, 123, 255, 0.7)', borderColor: 'rgba(0, 123, 255, 1)' }, // Azul (ejemplo)
+    'eliminado': { backgroundColor: 'rgba(220, 53, 69, 0.7)', borderColor: 'rgba(220, 53, 69, 1)' },
+    'asignado': { backgroundColor: 'rgba(40, 167, 69, 0.7)', borderColor: 'rgba(40, 167, 69, 1)' },
+    'prestado': { backgroundColor: 'rgba(255, 193, 7, 0.7)', borderColor: 'rgba(255, 193, 7, 1)' },
+    'enMantenimiento': { backgroundColor: 'rgba(108, 117, 125, 0.7)', borderColor: 'rgba(108, 117, 125, 1)' },
+    'enBodega': { backgroundColor: 'rgba(0, 123, 255, 0.7)', borderColor: 'rgba(0, 123, 255, 1)' },
   };
 
 
@@ -80,7 +81,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private cognitoService: CognitoService,
     private dashboardService: DashboardService
   ) {
-    // Registra los componentes necesarios de Chart.js
     Chart.register(PieController, ArcElement, Tooltip, Legend);
   }
 
@@ -97,6 +97,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.loadDashboardData();
     this.loadEstadoCounts();
+    this.loadLoansDue(); // Asegúrate de llamar a este método
   }
 
   ngOnDestroy(): void {
@@ -108,6 +109,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
     if (this.estadoCountsSubscription) {
       this.estadoCountsSubscription.unsubscribe();
+    }
+    if (this.loansDueSubscription) { // ¡Importante desuscribirse!
+      this.loansDueSubscription.unsubscribe();
     }
   }
 
@@ -140,9 +144,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Prepara los datos obtenidos del backend (estadoCounts) para el formato que Chart.js necesita.
-   */
+  loadLoansDue(): void {
+    console.log('Cargando préstamos por vencer...');
+    this.loansDueSubscription = this.dashboardService.getLoansDue().subscribe({
+      next: (data: LoanDue[]) => {
+        this.loansDue = data; // Asegúrate de asignar los datos aquí
+        console.log('Préstamos por vencer cargados:', this.loansDue);
+      },
+      error: (error) => {
+        console.error('Error al cargar los préstamos por vencer:', error);
+        alert('No se pudieron cargar los préstamos por vencer. Revisa la consola para más detalles.');
+      }
+    });
+  }
+
   private prepareChartData(): void {
     if (this.estadoCounts && this.estadoCounts.length > 0) {
       this.pieChartData.labels = this.estadoCounts.map(item => item.estado.charAt(0).toUpperCase() + item.estado.slice(1));
@@ -158,7 +173,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
           backgroundColors.push(colors.backgroundColor);
           borderColors.push(colors.borderColor);
         } else {
-          // Color por defecto si el estado no está en el mapa
           console.warn(`Color no definido para el estado: ${item.estado}. Usando color por defecto.`);
           backgroundColors.push('rgba(200, 200, 200, 0.7)');
           borderColors.push('rgba(200, 200, 200, 1)');
@@ -171,7 +185,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.pieChartData.datasets[0].borderWidth = 1;
 
     } else {
-      // Limpiar los datos del gráfico si no hay 'estadoCounts'
       this.pieChartData = {
         labels: [],
         datasets: [{
@@ -182,5 +195,28 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }]
       };
     }
+  }
+
+  formatDate(dateString: string): string {
+    if (!dateString) return '';
+
+    // Dividir la cadena 'YYYY-MM-DD' en sus componentes
+    const parts = dateString.split('-'); // Ejemplo: "2025-06-29" -> ["2025", "06", "29"]
+    const year = parseInt(parts[0]);
+    // Los meses en JavaScript (y TypeScript) son base 0 (enero es 0, junio es 5, etc.)
+    const month = parseInt(parts[1]) - 1;
+    const day = parseInt(parts[2]);
+
+    // Crear un objeto Date utilizando los componentes numéricos (año, mes, día)
+    // Esto asegura que la fecha se interprete en la zona horaria local del navegador,
+    // previniendo el problema de que se reste un día.
+    const date = new Date(year, month, day);
+
+    // Formatear la fecha a 'DD/MM/YYYY'
+    const formattedDay = date.getDate().toString().padStart(2, '0');
+    const formattedMonth = (date.getMonth() + 1).toString().padStart(2, '0'); // Volver a sumar 1 para el mes
+    const formattedYear = date.getFullYear();
+
+    return `${formattedDay}/${formattedMonth}/${formattedYear}`;
   }
 }

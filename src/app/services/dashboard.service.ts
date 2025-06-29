@@ -7,14 +7,36 @@ export interface DashboardData {
   recursosTotales: number;
   recursosPrestados: number;
   recursosMantenimiento: number;
-  recursosAtrasados: number;
+  recursosEliminado: number;
 }
 
-// ¡NUEVA Interfaz para el conteo por estado!
+// Nueva Interfaz para el conteo por estado
 export interface EstadoCount {
   estado: string;
   cantidad: number;
   porcentaje: number;
+}
+
+// Nueva Interfaz para el Recurso anidado en LoanDue
+export interface RecursoDashboard {
+  idRecurso?: number;
+  modelo: string;
+  descripcion: string;
+  numeroSerie: string;
+  fechaCompra: string;
+  fechaVencimientoGarantia: string;
+  emailUsuario: string;
+  estado: string;
+  categoria: string;
+}
+
+// NUEVA INTERFAZ para los préstamos por vencer
+export interface LoanDue {
+  prestamoId: number
+  solicitadoPor: string;
+  mensajeVencimiento: string;
+  fechaDevolucion: string;
+  recurso: RecursoDashboard;
 }
 
 @Injectable({
@@ -37,5 +59,10 @@ export class DashboardService {
    */
   getCountByEstadoConPorcentaje(): Observable<EstadoCount[]> {
     return this.http.get<EstadoCount[]>(`${this.apiUrl}/countByEstadoConPorcentaje`);
+  }
+
+  // NUEVO MÉTODO para obtener los préstamos por vencer
+  getLoansDue(): Observable<LoanDue[]> {
+    return this.http.get<LoanDue[]>(`${this.apiUrl}/findLoanDue`);
   }
 }
