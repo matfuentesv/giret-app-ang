@@ -1,6 +1,9 @@
 footer {
-  background-color: #b3e5fc;
+  background-color: #212529;
   color: #37474f;
-  text-align: center;
-  padding: 10px;
+  
+}
+
+.footer a:hover {
+  color: #0d6efd; /* tu azul principal */
 }
