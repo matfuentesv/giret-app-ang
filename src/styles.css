@@ -1,6 +1,7 @@
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body { height: 100%; margin: 0; } /* Deja estas líneas, son beneficiosas */
+body { font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* ... otros estilos ... */
 
 .pie-chart {
     max-width: 200px;

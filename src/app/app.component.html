@@ -1,10 +1,8 @@
 <div class="d-flex flex-column min-vh-100">
-  <!-- Contenedor principal de fila -->
+
   <div class="d-flex flex-grow-1">
-    <!-- Sidebar a la izquierda -->
     <app-sidebar *ngIf="router.url !== '/home'"></app-sidebar>
 
-    <!-- Contenido principal a la derecha -->
     <main class="flex-fill">
       <div class="container-fluid py-4">
         <router-outlet></router-outlet>
@@ -12,6 +10,6 @@
     </main>
   </div>
 
-  <!-- Footer siempre abajo -->
   <app-footer></app-footer>
+
 </div>
