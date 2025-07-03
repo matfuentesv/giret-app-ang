@@ -15,11 +15,23 @@ export interface Recurso {
   categoria: string;
 }
 
+
+export interface Documento {
+  id?: number;
+  key: string;
+  nombreArchivo: string;
+  url: string;
+  tipoMime: string;
+  fechaCarga: string; 
+  recursoId?: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class ResourceService {
-  private baseUrl = 'http://52.54.77.191:8085/bff/resource'; // URL base para los recursos
+  private baseUrl = 'http://52.54.77.191:8085/bff'; // URL base para los recursos
+  
 
   constructor(private http: HttpClient) { }
 
@@ -28,7 +40,11 @@ export class ResourceService {
    * @returns Un Observable con un array de recursos.
    */
   getResources(): Observable<Recurso[]> {
-    return this.http.get<Recurso[]>(`${this.baseUrl}/findAll`);
+    return this.http.get<Recurso[]>(`${this.baseUrl}/resource/findAll`);
+  }
+
+  getResourcesById(recursoId: number): Observable<Recurso[]> {
+    return this.http.get<Recurso[]>(`${this.baseUrl}/resource/findById/${recursoId}`);
   }
 
   /**
@@ -37,8 +53,33 @@ export class ResourceService {
    * @returns Un Observable con el recurso guardado (que podría incluir el ID generado).
    */
   saveResource(recurso: Recurso): Observable<Recurso> {
-    return this.http.post<Recurso>(`${this.baseUrl}/save`, recurso); // POST a /save
+    return this.http.post<Recurso>(`${this.baseUrl}/resource/save`, recurso); // POST a /save
   }
 
-  // Aquí podrías agregar métodos para actualizar, eliminar, etc.
+    /**
+   * Sube un documento al backend asociado a un recurso específico.
+   * @param file El archivo a subir (File).
+   * @param recursoId El ID del recurso al que se asociará el documento.
+   * @returns Un Observable con el Documento guardado.
+   */
+  uploadDocument(file: File, recursoId: number): Observable<Documento> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('recursoId', recursoId.toString());
+
+    
+    return this.http.post<Documento>(`${this.baseUrl}/document/saveDocument`, formData);
+  }
+
+  /**
+   * Obtiene la lista de documentos asociados a un recurso por su ID.
+   * @param recursoId El ID del recurso.
+   * @returns Un Observable con un array de Documento.
+   */
+  getDocumentsByRecursoId(recursoId: number): Observable<Documento[]> {
+    // ¡MODIFICACIÓN AQUÍ! Usando el endpoint /api/by-resource/{id}
+    return this.http.get<Documento[]>(`${this.baseUrl}/document/by-resource/${recursoId}`);
+  }
+
+
 }

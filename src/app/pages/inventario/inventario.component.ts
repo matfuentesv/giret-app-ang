@@ -31,6 +31,7 @@ export class InventarioComponent implements OnInit, OnDestroy {
   searchTerm: string = ''; // Término de búsqueda para el input
   selectedEstado: string = 'Filtrar por estado'; // Estado seleccionado en el dropdown, inicializado con el texto de la opción
   filteredRecursos: Recurso[] = []; // Almacena los recursos que se muestran en la tabla (después de filtrar/buscar)
+  selectedRecursoForDetails: Recurso | null = null;
 
   constructor(
     private cognitoService: CognitoService,
@@ -106,5 +107,11 @@ export class InventarioComponent implements OnInit, OnDestroy {
     }
 
     this.filteredRecursos = tempRecursos; // Actualiza la lista que se muestra en la tabla
+  }
+
+  // ¡NUEVO! Método para establecer el recurso a mostrar en el modal de detalles
+  viewResourceDetails(recurso: Recurso): void {
+    this.selectedRecursoForDetails = recurso;
+    console.log('Recurso seleccionado para detalles:', this.selectedRecursoForDetails);
   }
 }
