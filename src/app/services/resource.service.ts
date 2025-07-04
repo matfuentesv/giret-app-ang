@@ -43,8 +43,24 @@ export class ResourceService {
     return this.http.get<Recurso[]>(`${this.baseUrl}/resource/findAll`);
   }
 
+  /**
+ * Obtiene un recurso específico del backend por su ID.
+ * @param recursoId El ID del recurso que se desea obtener.
+ * @returns Un Observable que emite un array de recursos. Aunque el endpoint está diseñado para devolver un solo recurso,
+ * la API devuelve un array para consistencia, por lo que el primer elemento del array será el recurso deseado.
+ */
   getResourcesById(recursoId: number): Observable<Recurso[]> {
     return this.http.get<Recurso[]>(`${this.baseUrl}/resource/findById/${recursoId}`);
+  }
+
+  /**
+   * Actualiza un recurso existente en el backend.
+   * @param recursoId El ID del recurso a actualizar.
+   * @param recurso El objeto Recurso con los datos actualizados.
+   * @returns Un Observable con el recurso actualizado.
+   */
+  updateResource(recursoId: number, recurso: Recurso): Observable<Recurso> {
+    return this.http.put<Recurso>(`${this.baseUrl}/resource/update/${recursoId}`, recurso);
   }
 
   /**
@@ -77,7 +93,6 @@ export class ResourceService {
    * @returns Un Observable con un array de Documento.
    */
   getDocumentsByRecursoId(recursoId: number): Observable<Documento[]> {
-    // ¡MODIFICACIÓN AQUÍ! Usando el endpoint /api/by-resource/{id}
     return this.http.get<Documento[]>(`${this.baseUrl}/document/by-resource/${recursoId}`);
   }
 

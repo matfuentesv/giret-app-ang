@@ -1,48 +1,52 @@
-<form>
+<form (ngSubmit)="saveChanges()">
     <div class="mb-3">
-        <label for="Categoria" class="form-label">Categoria</label>
-        <select class="form-select" id="estado">
-            <option selected>Seleccione una Categoria</option>
-            <option value="Computacion">Computacion</option>
+        <label for="categoria" class="form-label">Categoría</label>
+        <select class="form-select" id="categoria" name="categoria" [(ngModel)]="editedRecurso.categoria">
+            <option value="" disabled selected>Seleccione una Categoria</option>
+            <option value="Computacion">Computación</option>
             <option value="Impresoras">Impresoras</option>
-            <option value="Telefonia">Telefonia</option>
-            <option value="Perifericos">Perifericos</option>
+            <option value="Telefonia">Telefonía</option>
+            <option value="Perifericos">Periféricos</option>
         </select>
     </div>
     <div class="mb-3">
         <label for="estado" class="form-label">Estado</label>
-        <select class="form-select" id="estado">
-            <option selected>Seleccione un estado</option>
-            <option value="enBodega">En Bodega</option>
+        <select class="form-select" id="estado" name="estado" [(ngModel)]="editedRecurso.estado">
+            <option value="" disabled selected>Seleccione un estado</option>
+            <option value="bodega">En Bodega</option>
             <option value="prestado">Prestado</option>
             <option value="asignado">Asignado</option>
-            <option value="enMantenimiento">En Mantenimiento</option>
+            <option value="mantenimiento">En Mantenimiento</option>
+            <option value="eliminado">Eliminado</option>
         </select>
     </div>
     <div class="mb-3">
         <label for="modelo" class="form-label">Modelo</label>
-        <input type="text" class="form-control" id="modelo" placeholder="Ej: Notebook Dell XPS 15">
+        <input type="text" class="form-control" id="modelo" name="modelo" [(ngModel)]="editedRecurso.modelo" placeholder="Ej: Notebook Dell XPS 15">
     </div>
     <div class="mb-3">
         <label for="descripcion" class="form-label">Descripción</label>
-        <textarea class="form-control" id="descripcion" rows="3"
+        <textarea class="form-control" id="descripcion" name="descripcion" rows="3" [(ngModel)]="editedRecurso.descripcion"
             placeholder="Ej: Intel Core i7, 16GB RAM, 512GB SSD"></textarea>
     </div>
     <div class="mb-3">
         <label for="numeroSerie" class="form-label">N° de Serie</label>
-        <input type="text" class="form-control" id="numeroSerie" placeholder="Ej: DXPS15-987654">
+        <input type="text" class="form-control" id="numeroSerie" name="numeroSerie" [(ngModel)]="editedRecurso.numeroSerie" placeholder="Ej: DXPS15-987654">
     </div>
-
     <div class="mb-3">
         <label for="fechaCompra" class="form-label">Fecha de Compra</label>
-        <input type="date" class="form-control" id="fechaCompra">
+        <input type="date" class="form-control" id="fechaCompra" name="fechaCompra" [(ngModel)]="editedRecurso.fechaCompra">
     </div>
     <div class="mb-3">
-        <label for="vencimientoGarantia" class="form-label">Fecha de Vencimiento de Garantía</label>
-        <input type="date" class="form-control" id="vencimientoGarantia">
+        <label for="fechaVencimientoGarantia" class="form-label">Fecha de Vencimiento de Garantía</label>
+        <input type="date" class="form-control" id="fechaVencimientoGarantia" name="fechaVencimientoGarantia" [(ngModel)]="editedRecurso.fechaVencimientoGarantia">
+    </div>
+    <div class="mb-3">
+        <label for="emailUsuario" class="form-label">Email Usuario</label>
+        <input type="email" class="form-control" id="emailUsuario" name="emailUsuario" [(ngModel)]="editedRecurso.emailUsuario" readonly>
     </div>
     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-primary">Guardar Recurso</button>
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
     </div>
 </form>

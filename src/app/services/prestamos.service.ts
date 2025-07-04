@@ -41,5 +41,12 @@ export class PrestamosService {
     return this.http.get<Loan[]>(`${this.baseUrl}/findAll`);
   }
 
-
+  /**
+   * Guarda un nuevo préstamo en el backend.
+   * @param loan El objeto Loan a guardar.
+   * @returns Un Observable con el préstamo guardado (que podría incluir el ID generado).
+   */
+  saveLoan(loan: Loan): Observable<Loan> {
+    return this.http.post<Loan>(`${this.baseUrl}/saveLoan`, loan);
+  }
 }

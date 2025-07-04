@@ -13,7 +13,8 @@
       <option selected>Filtrar por estado...</option>
       <option>Activo</option>
       <option>Atrasado</option>
-      <option>Devuelto</option> </select>
+      <option>Devuelto</option> 
+    </select>
     <button class="btn btn-primary w-100 w-sm-auto text-nowrap" data-bs-toggle="modal" data-bs-target="#crearPrestamoModal">
       <i class="fas fa-plus me-2"></i>Registrar Préstamo
     </button>
@@ -68,14 +69,15 @@
 </div>
 
 <div class="modal fade" id="crearPrestamoModal" tabindex="-1" aria-labelledby="crearPrestamoModalLabel" aria-hidden="true">
-  <div class="modal-dialog"> <div class="modal-content">
+  <div class="modal-dialog">
+    <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="crearPrestamoModalLabel">Registrar Nuevo Préstamo</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <app-crear-prestamo></app-crear-prestamo>
+        <app-crear-prestamo (loanCreated)="onLoanCreated()"></app-crear-prestamo>
       </div>
-      </div>
+    </div>
   </div>
 </div>

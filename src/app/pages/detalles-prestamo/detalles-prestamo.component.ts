@@ -25,11 +25,6 @@ export class DetallesPrestamoComponent implements OnInit{
   @Input() recurso: Recurso | null = null;
    documentosAsociados: Documento[] = [];
 
-  //Método para establecer el recurso a mostrar en el modal de detalles
-  viewResourceDetails(recurso: Recurso): void {
-    this.selectedRecursoForDetails = recurso;
-    console.log('Recurso seleccionado para detalles:', this.selectedRecursoForDetails);
-  }
 
    ngOnInit(): void {
      if (this.recurso) {

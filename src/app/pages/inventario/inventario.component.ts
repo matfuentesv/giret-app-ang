@@ -8,6 +8,8 @@ import { EditarRecursoComponent } from '../editar-recurso/editar-recurso.compone
 import { ResourceService, Recurso } from '../../services/resource.service'; 
 import { FormsModule } from '@angular/forms';
 
+// Importar Modal de Bootstrap para cerrar el modal programáticamente
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-inventario',
@@ -32,7 +34,8 @@ export class InventarioComponent implements OnInit, OnDestroy {
   selectedEstado: string = 'Filtrar por estado'; // Estado seleccionado en el dropdown, inicializado con el texto de la opción
   filteredRecursos: Recurso[] = []; // Almacena los recursos que se muestran en la tabla (después de filtrar/buscar)
   selectedRecursoForDetails: Recurso | null = null;
-
+  selectedRecursoForEdit: Recurso | null = null;
+  
   constructor(
     private cognitoService: CognitoService,
     private resourceService: ResourceService 
@@ -66,7 +69,7 @@ export class InventarioComponent implements OnInit, OnDestroy {
       (data: Recurso[]) => {
         this.recursos = data; // Asigna los datos obtenidos a la propiedad 'recursos'
         this.applyFilters();
-        console.log('Recursos cargados:', this.recursos); // Para depuracion
+        console.log('Recursos cargados:', this.recursos); 
       },
       (error) => {
         console.error('Error al cargar los recursos:', error);
@@ -84,7 +87,7 @@ export class InventarioComponent implements OnInit, OnDestroy {
     }
   }
 
-/**
+  /**
    * Aplica los filtros de búsqueda y estado a la lista de recursos.
    */
   applyFilters(): void {
@@ -109,9 +112,58 @@ export class InventarioComponent implements OnInit, OnDestroy {
     this.filteredRecursos = tempRecursos; // Actualiza la lista que se muestra en la tabla
   }
 
-  // ¡NUEVO! Método para establecer el recurso a mostrar en el modal de detalles
+  //Método para establecer el recurso a mostrar en el modal de detalles
   viewResourceDetails(recurso: Recurso): void {
     this.selectedRecursoForDetails = recurso;
     console.log('Recurso seleccionado para detalles:', this.selectedRecursoForDetails);
+  }
+
+   //Método para establecer el recurso a editar
+  editResource(recurso: Recurso): void {
+    this.selectedRecursoForEdit = { ...recurso }; // Pasa una copia del recurso para evitar modificación directa
+    console.log('Recurso seleccionado para editar:', this.selectedRecursoForEdit);
+  }
+
+  //Método que se ejecuta cuando el EditarRecursoComponent emite resourceUpdated
+  onResourceEdited(updatedRecurso: Recurso): void {
+    console.log('Recurso actualizado recibido del componente hijo:', updatedRecurso);
+    this.getResources(); // Recargar la lista de recursos para reflejar los cambios
+    this.closeEditModal(); // Cerrar el modal después de la actualización exitosa
+  }
+
+  
+  /**
+   * Método para cerrar el modal de edición.
+   * Se ha modificado para asegurar que la instancia del modal de Bootstrap se obtenga correctamente
+   * y que el backdrop se elimine.
+   */
+  closeEditModal(): void {
+    const modalElement = document.getElementById('editarRecursoModal');
+    if (modalElement) {
+      // Intenta obtener la instancia existente del modal de Bootstrap
+      let modalInstance = (window as any).bootstrap.Modal.getInstance(modalElement);
+
+      // Si no existe una instancia, créala. Esto es común si el modal se abre con data-bs-target.
+      if (!modalInstance) {
+        modalInstance = new (window as any).bootstrap.Modal(modalElement);
+      }
+
+      // Ahora que tienes la instancia, la puedes ocultar
+      modalInstance.hide();
+
+      // Opcional: Remover el backdrop y la clase 'modal-open' del body
+      // Esto es una medida de seguridad si 'modal.hide()' no limpia completamente el DOM.
+      const body = document.body;
+      if (body.classList.contains('modal-open')) {
+          body.classList.remove('modal-open');
+      }
+      const backdrops = document.getElementsByClassName('modal-backdrop');
+      while (backdrops.length > 0) {
+          backdrops[0].parentNode?.removeChild(backdrops[0]);
+      }
+
+    } else {
+      console.warn("Elemento 'editarRecursoModal' no encontrado para cerrar el modal.");
+    }
   }
 }

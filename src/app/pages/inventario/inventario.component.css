@@ -1,7 +1,7 @@
 .recursos-table-scroll-container {
-  max-height: 650px; /* Ajusta esta altura máxima según lo necesites */
+  max-height: 320px; /* Ajusta esta altura máxima según lo necesites */
   overflow-y: auto;  /* Habilita el scroll vertical cuando el contenido excede la altura */
-  /* padding-right: 15px; Opcional: para evitar que el scrollbar se superponga al contenido */
+  padding-right: 15px; 
 }
 
 /* Opcional: Estilos para personalizar la barra de desplazamiento (para navegadores Webkit como Chrome, Safari) */

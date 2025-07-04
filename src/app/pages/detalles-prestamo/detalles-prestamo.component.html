@@ -5,23 +5,41 @@
     <!-- Información general -->
     <div class="card shadow-sm border-0 mb-4">
       <div class="card-body p-4">
-        <h5 class="card-title fw-bold mb-3">Información General: Notebook Dell XPS 15</h5>
+        <h5 class="card-title fw-bold mb-3">Información General: {{ recurso?.modelo }}</h5>
         <div class="row">
           <div class="col-12 col-sm-6 mb-3">
             <h6 class="text-muted">Estado Actual</h6>
-            <span class="badge text-bg-success">En Bodega</span>
+            <span class="badge" [ngClass]="{
+              'bg-success': recurso?.estado === 'bodega',
+              'bg-warning': recurso?.estado === 'prestado',
+              'bg-primary': recurso?.estado === 'asignado',
+              'bg-info': recurso?.estado === 'mantenimiento',
+              'bg-secondary': recurso?.estado === 'eliminado'
+            }">{{ recurso?.estado }}</span>
+          </div>
+          <div class="col-12 col-sm-6 mb-3">
+            <h6 class="text-muted">Categoría</h6>
+            <p>{{ recurso?.categoria }}</p>
+          </div>
+          <div class="col-12 col-sm-6 mb-3">
+            <h6 class="text-muted">Descripción</h6>
+            <p>{{ recurso?.descripcion }}</p>
           </div>
           <div class="col-12 col-sm-6 mb-3">
             <h6 class="text-muted">N° de Serie</h6>
-            <p>DXPS15-987654</p>
+            <p>{{ recurso?.numeroSerie }}</p>
           </div>
           <div class="col-12 col-sm-6 mb-3">
             <h6 class="text-muted">Fecha de Compra</h6>
-            <p>15/03/2024</p>
+            <p>{{ recurso?.fechaCompra }}</p>
           </div>
           <div class="col-12 col-sm-6 mb-3">
             <h6 class="text-muted">Vencimiento Garantía</h6>
-            <p class="text-danger fw-bold">15/03/2026</p>
+            <p [ngClass]="{'text-danger fw-bold': recurso?.fechaVencimientoGarantia}">{{ recurso?.fechaVencimientoGarantia }}</p>
+          </div>
+          <div class="col-12 col-sm-6 mb-3">
+            <h6 class="text-muted">Email Usuario</h6>
+            <p>{{ recurso?.emailUsuario }}</p>
           </div>
         </div>
       </div>
