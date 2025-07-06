@@ -72,23 +72,17 @@
       <div class="card-body p-4">
         <h5 class="card-title fw-bold mb-4">Historial de Movimientos</h5>
         <div class="timeline">
-          <div class="timeline-item mb-4">
-            <small class="text-muted">15/06/2025</small>
-            <p class="fw-bold mb-0">Devuelto a Bodega</p>
-            <small>Usuario Juan Pérez devolvió el equipo.</small>
+          <div class="timeline-item mb-4" *ngFor="let item of historialRecurso">
+            <small class="text-muted">{{ formatDate(item.fechaCambioEstado) }}</small>
+            <p class="fw-bold mb-0">{{ item.accion }}</p>
+            <small>{{ item.descripcion }}</small>
           </div>
-          <div class="timeline-item mb-4">
-            <small class="text-muted">01/06/2025</small>
-            <p class="fw-bold mb-0">Prestado a usuario</p>
-            <small>Asignado a Juan Pérez para proyecto.</small>
-          </div>
-          <div class="timeline-item">
-            <small class="text-muted">15/03/2025</small>
-            <p class="fw-bold mb-0">Ingresado a Inventario</p>
-            <small>Recurso nuevo agregado al sistema.</small>
+          <div class="timeline-item mb-4" *ngIf="!historialRecurso || historialRecurso.length === 0">
+            <p class="text-muted">No hay historial de movimientos disponible para este recurso.</p>
           </div>
         </div>
       </div>
     </div>
   </div>
+
 </div>

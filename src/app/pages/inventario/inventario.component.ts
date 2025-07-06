@@ -140,19 +140,15 @@ export class InventarioComponent implements OnInit, OnDestroy {
   closeEditModal(): void {
     const modalElement = document.getElementById('editarRecursoModal');
     if (modalElement) {
-      // Intenta obtener la instancia existente del modal de Bootstrap
+  
       let modalInstance = (window as any).bootstrap.Modal.getInstance(modalElement);
 
-      // Si no existe una instancia, créala. Esto es común si el modal se abre con data-bs-target.
       if (!modalInstance) {
         modalInstance = new (window as any).bootstrap.Modal(modalElement);
       }
 
-      // Ahora que tienes la instancia, la puedes ocultar
       modalInstance.hide();
 
-      // Opcional: Remover el backdrop y la clase 'modal-open' del body
-      // Esto es una medida de seguridad si 'modal.hide()' no limpia completamente el DOM.
       const body = document.body;
       if (body.classList.contains('modal-open')) {
           body.classList.remove('modal-open');
