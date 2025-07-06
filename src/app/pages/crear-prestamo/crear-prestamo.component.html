@@ -1,15 +1,27 @@
 <form (ngSubmit)="createLoan()" #loanForm="ngForm"> 
-  
-  <div class="mb-3">
-    <label for="recursoAsociado" class="form-label">Recurso Asociado</label>
-    <select class="form-select" id="recursoAsociado" name="recursoId" [(ngModel)]="newLoan.recursoId" required #recursoId="ngModel">
-      <option [value]="0" disabled selected>Seleccione un recurso</option>
-      <option *ngFor="let recurso of recursosDisponibles" [value]="recurso.idRecurso">
-        {{ recurso.modelo }} (N° Serie: {{ recurso.numeroSerie }})
-      </option>
-    </select>
-    <div *ngIf="recursoId.invalid && (recursoId.dirty || recursoId.touched)" class="text-danger">
-      <div *ngIf="recursoId.errors?.['required']">El recurso asociado es requerido.</div>
+
+  <div class="mb-3 position-relative"> <label for="recursoAsociado" class="form-label">Recurso Asociado</label>
+    <input
+      type="text"
+      class="form-control"
+      id="recursoAsociado"
+      name="recursoAsociadoInput"
+      [(ngModel)]="selectedRecursoText"
+      (input)="onRecursoInput()"         (blur)="onRecursoBlur()"           required #recursoAsociadoInput="ngModel">
+
+    <div *ngIf="showSuggestions && filteredRecursos.length > 0" class="suggestions-list">
+      <div
+        *ngFor="let recurso of filteredRecursos"
+        class="suggestion-item"
+        (mousedown)="selectRecurso(recurso)"> {{ recurso.modelo }} (N° Serie: {{ recurso.numeroSerie }})
+      </div>
+    </div>
+
+    <div *ngIf="recursoAsociadoInput.invalid && (recursoAsociadoInput.dirty || recursoAsociadoInput.touched)" class="text-danger">
+      <div *ngIf="recursoAsociadoInput.errors?.['required']">El recurso asociado es requerido.</div>
+    </div>
+    <div *ngIf="isInvalidRecursoSelection && (recursoAsociadoInput.dirty || recursoAsociadoInput.touched)" class="text-danger">
+      Seleccione un recurso válido de la lista.
     </div>
   </div>
   

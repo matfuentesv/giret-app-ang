@@ -1,6 +1,31 @@
-select#recursoAsociado {
+.position-relative {
+  position: relative;
+}
 
-  max-height: 250px; /* Por ejemplo, 250 píxeles */
+.suggestions-list {
+  position: absolute;
+  top: 100%; /* Justo debajo del input */
+  left: 0;
+  right: 0;
+  z-index: 1000; /* Para que esté por encima de otros elementos */
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-top: none;
+  border-radius: 0 0 0.25rem 0.25rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  max-height: 200px; /* Limita la altura para scroll */
+  overflow-y: auto; /* Habilita el scroll */
+}
 
-  overflow-y: auto;
+.suggestion-item {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  white-space: nowrap; /* Evita que el texto se rompa en varias líneas */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Añade puntos suspensivos si el texto es muy largo */
+}
+
+.suggestion-item:hover,
+.suggestion-item.active { /* Puedes añadir una clase 'active' si quieres manejar navegación con teclado */
+  background-color: #e9ecef;
 }
