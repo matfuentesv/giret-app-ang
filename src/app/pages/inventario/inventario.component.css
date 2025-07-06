@@ -1,5 +1,5 @@
 .recursos-table-scroll-container {
-  max-height: 320px; /* Ajusta esta altura máxima según lo necesites */
+  max-height: 600px; /* Ajusta esta altura máxima según lo necesites */
   overflow-y: auto;  /* Habilita el scroll vertical cuando el contenido excede la altura */
   padding-right: 15px; 
 }
