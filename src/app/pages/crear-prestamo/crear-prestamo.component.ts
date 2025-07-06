@@ -25,6 +25,8 @@ export class CrearPrestamoComponent implements OnInit{
 
   @Output() loanCreated = new EventEmitter<void>(); // Evento para notificar al padre que un préstamo fue creado
 
+  fechasPrestamoInvalidas: boolean = false;
+
   constructor(
     private resourceService: ResourceService, // Inyectar ResourceService
     private prestamosService: PrestamosService // Inyectar PrestamosService
@@ -49,6 +51,22 @@ export class CrearPrestamoComponent implements OnInit{
     });
   }
 
+  //Metodo para validar las fechas de préstamo y devolución
+  validateLoanDates(): void {
+    this.fechasPrestamoInvalidas = false; // Resetear el estado de error
+
+    if (this.newLoan.fechaPrestamo && this.newLoan.fechaDevolucion) {
+      const fechaPrestamo = new Date(this.newLoan.fechaPrestamo);
+      const fechaDevolucion = new Date(this.newLoan.fechaDevolucion);
+
+      // La fecha de préstamo NO puede ser MAYOR a la fecha de devolución
+      // O, lo que es lo mismo, la fecha de devolución NO puede ser MENOR a la fecha de préstamo
+      if (fechaDevolucion < fechaPrestamo) {
+        this.fechasPrestamoInvalidas = true;
+      }
+    }
+  }
+
   /**
    * Maneja el envío del formulario para crear un nuevo préstamo.
    */
@@ -57,6 +75,13 @@ export class CrearPrestamoComponent implements OnInit{
     if (!this.newLoan.recursoId || !this.newLoan.fechaPrestamo || !this.newLoan.solicitante) {
       alert('Por favor, complete todos los campos obligatorios.');
       return;
+    }
+
+    // Ejecuta la validación de fechas justo antes de enviar
+     this.validateLoanDates();
+    if (this.fechasPrestamoInvalidas) {
+      alert('La fecha de devolución no puede ser anterior a la fecha de préstamo.');
+      return; // Detiene el envío del formulario
     }
 
     console.log('Intentando crear préstamo:', this.newLoan);
@@ -87,6 +112,7 @@ export class CrearPrestamoComponent implements OnInit{
       solicitante: '',
       estado: 'activo'
     };
+    this.fechasPrestamoInvalidas = false;
   }
 
   /**

@@ -1,27 +1,44 @@
-<form (ngSubmit)="createLoan()">
+<form (ngSubmit)="createLoan()" #loanForm="ngForm"> 
+  
   <div class="mb-3">
     <label for="recursoAsociado" class="form-label">Recurso Asociado</label>
-    <select class="form-select" id="recursoAsociado" name="recursoId" [(ngModel)]="newLoan.recursoId" required>
+    <select class="form-select" id="recursoAsociado" name="recursoId" [(ngModel)]="newLoan.recursoId" required #recursoId="ngModel">
       <option [value]="0" disabled selected>Seleccione un recurso</option>
       <option *ngFor="let recurso of recursosDisponibles" [value]="recurso.idRecurso">
         {{ recurso.modelo }} (N° Serie: {{ recurso.numeroSerie }})
       </option>
     </select>
+    <div *ngIf="recursoId.invalid && (recursoId.dirty || recursoId.touched)" class="text-danger">
+      <div *ngIf="recursoId.errors?.['required']">El recurso asociado es requerido.</div>
+    </div>
   </div>
+  
   <div class="mb-3">
     <label for="solicitante" class="form-label">Solicitante</label>
-    <input type="text" class="form-control" id="solicitante" name="solicitante" [(ngModel)]="newLoan.solicitante" placeholder="Nombre completo del solicitante" required>
+    <input type="text" class="form-control" id="solicitante" name="solicitante" [(ngModel)]="newLoan.solicitante" placeholder="Nombre completo del solicitante" required #solicitante="ngModel">
+    <div *ngIf="solicitante.invalid && (solicitante.dirty || solicitante.touched)" class="text-danger">
+      <div *ngIf="solicitante.errors?.['required']">El solicitante es requerido.</div>
+    </div>
   </div>
+  
   <div class="mb-3">
     <label for="fechaPrestamo" class="form-label">Fecha Préstamo</label>
-    <input type="date" class="form-control" id="fechaPrestamo" name="fechaPrestamo" [(ngModel)]="newLoan.fechaPrestamo" required>
+    <input type="date" class="form-control" id="fechaPrestamo" name="fechaPrestamo" [(ngModel)]="newLoan.fechaPrestamo" required (change)="validateLoanDates()" #fechaPrestamo="ngModel">
+    <div *ngIf="fechaPrestamo.invalid && (fechaPrestamo.dirty || fechaPrestamo.touched)" class="text-danger">
+      <div *ngIf="fechaPrestamo.errors?.['required']">La fecha de préstamo es requerida.</div>
+    </div>
   </div>
+  
   <div class="mb-3">
     <label for="fechaDevolucion" class="form-label">Fecha Devolución</label>
-    <input type="date" class="form-control" id="fechaDevolucion" name="fechaDevolucion" [(ngModel)]="newLoan.fechaDevolucion">
+    <input type="date" class="form-control" id="fechaDevolucion" name="fechaDevolucion" [(ngModel)]="newLoan.fechaDevolucion" (change)="validateLoanDates()" #fechaDevolucion="ngModel">
+    <div *ngIf="fechasPrestamoInvalidas" class="text-danger">
+      La fecha de devolución no puede ser anterior a la fecha de préstamo.
+    </div>
   </div>
+  
   <div class="d-grid gap-2 d-md-flex justify-content-md-end">
     <button type="button" class="btn btn-secondary" (click)="resetForm()">Limpiar</button>
-    <button type="submit" class="btn btn-primary">Registrar Préstamo</button>
+    <button type="submit" class="btn btn-primary" [disabled]="!loanForm.form.valid || fechasPrestamoInvalidas">Registrar Préstamo</button>
   </div>
 </form>

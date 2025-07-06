@@ -132,4 +132,45 @@ export class PrestamosComponent implements OnInit {
       console.warn("Elemento 'crearPrestamoModal' no encontrado para cerrar el modal.");
     }
   }
+
+    /**
+   * Registra la devolución de un préstamo.
+   * @param loanId El ID del préstamo a registrar como devuelto.
+   */
+  registerReturn(loanId: number | undefined): void {
+    if (loanId === undefined) {
+      console.error('ID del préstamo no definido para la devolución.');
+      alert('Error: No se pudo registrar la devolución. ID del préstamo no disponible.');
+      return;
+    }
+
+    const loanToUpdate = this.loans.find(loan => loan.idPrestamo === loanId);
+
+    if (!loanToUpdate) {
+      console.error('Préstamo no encontrado en la lista para el ID:', loanId);
+      alert('Error: No se encontró el préstamo para registrar la devolución.');
+      return;
+    }
+
+    if (!confirm('¿Estás seguro de que quieres registrar este préstamo como devuelto?')) {
+      return; 
+    }
+
+    this.prestamosService.updateLoanState(loanId, loanToUpdate.recursoId, 'devuelto').subscribe({
+      next: (success: boolean) => { 
+        if (success) {
+          console.log('Préstamo actualizado a devuelto con éxito.');
+          alert('Préstamo registrado como devuelto con éxito!');
+          this.getLoans(); 
+        } else {
+          console.warn('La actualización del préstamo no fue exitosa (el backend devolvió false).');
+          alert('Hubo un problema al registrar la devolución. Intente de nuevo.');
+        }
+      },
+      error: (error) => {
+        console.error('Error al registrar la devolución del préstamo:', error);
+        alert('Hubo un error al registrar la devolución. Por favor, revisa la consola.');
+      }
+    });
+  }
 }

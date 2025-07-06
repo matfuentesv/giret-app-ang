@@ -28,12 +28,28 @@ export class CrearRecursoComponent implements OnInit{
   @Output() resourceCreated = new EventEmitter<void>();
   selectedFiles: File[] = [];
 
+  fechaGarantiaInvalida: boolean = false; //
+
   constructor(private resourceService: ResourceService,private cognitoService: CognitoService) {} // Inyecta el ResourceService
   
-  // ¡NUEVO! Método para manejar la selección de archivos
+  //Método para manejar la selección de archivos
   onFileSelected(event: any): void {
     this.selectedFiles = Array.from(event.target.files);
     console.log('Archivos seleccionados:', this.selectedFiles); // Para depuración
+  }
+
+  // Método para la validación de fechas en tiempo real
+  onDateChange(): void {
+    this.fechaGarantiaInvalida = false; // Resetear el estado de error
+
+    if (this.newRecurso.fechaCompra && this.newRecurso.fechaVencimientoGarantia) {
+      const fechaCompra = new Date(this.newRecurso.fechaCompra);
+      const fechaVencimientoGarantia = new Date(this.newRecurso.fechaVencimientoGarantia);
+
+      if (fechaVencimientoGarantia < fechaCompra) {
+        this.fechaGarantiaInvalida = true;
+      }
+    }
   }
 
   /**
@@ -42,12 +58,20 @@ export class CrearRecursoComponent implements OnInit{
   onSubmit(): void {
     console.log('Datos del recurso a enviar:', this.newRecurso);
 
+     // Ejecutar la validación de fecha justo antes de enviar, por si el usuario no cambió la fecha después de la última validación en tiempo real.
+    this.onDateChange(); 
+    
+    if (this.fechaGarantiaInvalida) { // Si la validación de fecha falló
+      return; // Detiene el envío del formulario
+    }
+
+
     this.resourceService.saveResource(this.newRecurso).subscribe({
       next: (response) => {
         console.log('Recurso guardado con éxito:', response);
         alert('Recurso agregado correctamente!');
 
-        // ¡NUEVO! Lógica para subir documentos DESPUÉS de guardar el recurso
+        //Lógica para subir documentos DESPUÉS de guardar el recurso
         if (response.idRecurso && this.selectedFiles.length > 0) {
           this.selectedFiles.forEach(file => {
             this.resourceService.uploadDocument(file, response.idRecurso!).subscribe({
@@ -93,6 +117,7 @@ export class CrearRecursoComponent implements OnInit{
       categoria: ''
     };
     this.selectedFiles = [];
+    this.fechaGarantiaInvalida = false; 
   }
 
     userEmail: string | null = null;

@@ -1,0 +1,6 @@
+select#recursoAsociado {
+
+  max-height: 250px; /* Por ejemplo, 250 píxeles */
+
+  overflow-y: auto;
+}

@@ -1,42 +1,69 @@
 <form (ngSubmit)="onSubmit()" #recursoForm="ngForm">
   <div class="mb-3">
     <label for="categoria" class="form-label">Categoría</label>
-    <select id="categoria" name="categoria" class="form-select" [(ngModel)]="newRecurso.categoria" required>
+    <select id="categoria" name="categoria" class="form-select" [(ngModel)]="newRecurso.categoria" required #categoria="ngModel">
       <option value="" disabled selected>Selecciona una Categoría</option>
       <option value="Computacion">Computación</option>
       <option value="Impresoras">Impresoras</option>
       <option value="Telefonia">Telefonía</option>
-      <option value="Perifericos">Periféricos</option>
+      <option value="Perifericos">Perifericos</option>
       <option value="Audio y Video">Audio y Video</option>
       <option value="Redes">Redes</option>
       <option value="Software">Software</option>
       <option value="Otros">Otros</option>
     </select>
+    <div *ngIf="categoria.invalid && (categoria.dirty || categoria.touched)" class="text-danger">
+      <div *ngIf="categoria.errors?.['required']">La categoría es requerida.</div>
+    </div>
   </div>
 
   <div class="mb-3">
     <label for="modelo" class="form-label">Modelo</label>
-    <input type="text" id="modelo" name="modelo" class="form-control" [(ngModel)]="newRecurso.modelo" required>
+    <input type="text" id="modelo" name="modelo" class="form-control" [(ngModel)]="newRecurso.modelo" required minlength="3" maxlength="50" #modelo="ngModel">
+    <div *ngIf="modelo.invalid && (modelo.dirty || modelo.touched)" class="text-danger">
+      <div *ngIf="modelo.errors?.['required']">El modelo es requerido.</div>
+      <div *ngIf="modelo.errors?.['minlength']">El modelo debe tener al menos 3 caracteres.</div>
+      <div *ngIf="modelo.errors?.['maxlength']">El modelo no debe exceder los 50 caracteres.</div>
+    </div>
   </div>
 
   <div class="mb-3">
     <label for="descripcion" class="form-label">Descripción</label>
-    <textarea id="descripcion" name="descripcion" class="form-control" [(ngModel)]="newRecurso.descripcion" rows="3" required></textarea>
+    <textarea id="descripcion" name="descripcion" class="form-control" [(ngModel)]="newRecurso.descripcion" rows="3" required maxlength="200" #descripcion="ngModel"></textarea>
+    <div *ngIf="descripcion.invalid && (descripcion.dirty || descripcion.touched)" class="text-danger">
+      <div *ngIf="descripcion.errors?.['required']">La descripción es requerida.</div>
+      <div *ngIf="descripcion.errors?.['maxlength']">La descripción no debe exceder los 200 caracteres.</div>
+    </div>
   </div>
 
   <div class="mb-3">
     <label for="numeroSerie" class="form-label">N° de Serie</label>
-    <input type="text" id="numeroSerie" name="numeroSerie" class="form-control" [(ngModel)]="newRecurso.numeroSerie" required>
+    <input type="text" id="numeroSerie" name="numeroSerie" class="form-control" [(ngModel)]="newRecurso.numeroSerie" required pattern="^[a-zA-Z0-9]+$" minlength="5" maxlength="30" #numeroSerie="ngModel">
+    <div *ngIf="numeroSerie.invalid && (numeroSerie.dirty || numeroSerie.touched)" class="text-danger">
+      <div *ngIf="numeroSerie.errors?.['required']">El número de serie es requerido.</div>
+      <div *ngIf="numeroSerie.errors?.['pattern']">El número de serie solo puede contener letras y números.</div>
+      <div *ngIf="numeroSerie.errors?.['minlength']">El número de serie debe tener al menos 5 caracteres.</div>
+      <div *ngIf="numeroSerie.errors?.['maxlength']">El número de serie no debe exceder los 30 caracteres.</div>
+    </div>
   </div>
 
   <div class="mb-3">
     <label for="fechaCompra" class="form-label">Fecha de Compra</label>
-    <input type="date" id="fechaCompra" name="fechaCompra" class="form-control" [(ngModel)]="newRecurso.fechaCompra" required>
+    <input type="date" id="fechaCompra" name="fechaCompra" class="form-control" [(ngModel)]="newRecurso.fechaCompra" required (change)="onDateChange()" #fechaCompra="ngModel">
+    <div *ngIf="fechaCompra.invalid && (fechaCompra.dirty || fechaCompra.touched)" class="text-danger">
+      <div *ngIf="fechaCompra.errors?.['required']">La fecha de compra es requerida.</div>
+    </div>
   </div>
 
   <div class="mb-3">
     <label for="fechaVencimientoGarantia" class="form-label">Fecha de Vencimiento de Garantía</label>
-    <input type="date" id="fechaVencimientoGarantia" name="fechaVencimientoGarantia" class="form-control" [(ngModel)]="newRecurso.fechaVencimientoGarantia" required>
+    <input type="date" id="fechaVencimientoGarantia" name="fechaVencimientoGarantia" class="form-control" [(ngModel)]="newRecurso.fechaVencimientoGarantia" required (change)="onDateChange()" #fechaVencimientoGarantia="ngModel">
+    <div *ngIf="fechaVencimientoGarantia.invalid && (fechaVencimientoGarantia.dirty || fechaVencimientoGarantia.touched)" class="text-danger">
+      <div *ngIf="fechaVencimientoGarantia.errors?.['required']">La fecha de vencimiento de garantía es requerida.</div>
+    </div>
+    <div *ngIf="fechaGarantiaInvalida" class="text-danger">
+      La fecha de vencimiento de la garantía no puede ser anterior a la fecha de compra.
+    </div>
   </div>
 
   <div class="mb-3">
@@ -46,23 +73,26 @@
 
   <div class="mb-3">
     <label for="estado" class="form-label">Estado</label>
-    <select id="estado" name="estado" class="form-select" [(ngModel)]="newRecurso.estado" required>
+    <select id="estado" name="estado" class="form-select" [(ngModel)]="newRecurso.estado" required #estado="ngModel">
       <option value="bodega">En Bodega</option>
       <option value="prestado">Prestado</option>
       <option value="asignado">Asignado</option>
       <option value="mantenimiento">En Mantenimiento</option>
       <option value="eliminado">Eliminado</option>
     </select>
+    <div *ngIf="estado.invalid && (estado.dirty || estado.touched)" class="text-danger">
+      <div *ngIf="estado.errors?.['required']">El estado es requerido.</div>
+    </div>
   </div>
 
-    <div class="mb-3">
+  <div class="mb-3">
     <label for="documentos" class="form-label">Documentos (Facturas, Garantías)</label>
     <input type="file" id="documentos" class="form-control" (change)="onFileSelected($event)" multiple>
   </div>
   
   <div class="d-flex justify-content-end gap-2 mt-4">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-    <button type="submit" class="btn btn-primary" [disabled]="!recursoForm.form.valid">
+    <button type="submit" class="btn btn-primary" [disabled]="!recursoForm.form.valid || fechaGarantiaInvalida">
       <i class="fas fa-save me-2"></i>Guardar Recurso
     </button>
   </div>
