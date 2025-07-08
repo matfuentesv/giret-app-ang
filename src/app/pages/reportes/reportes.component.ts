@@ -1,8 +1,9 @@
+// reportes.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PrestamosService, Loan } from '../../services/prestamos.service';
 import { ResourceService, Recurso } from '../../services/resource.service';
-import { Observable, forkJoin } from 'rxjs'; // Importa Observable y forkJoin si es necesario para combinar llamadas
+import { Observable, forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-reportes',
@@ -39,9 +40,9 @@ export class ReportesComponent implements OnInit {
         console.log('Reporte Inventario General:', this.reportData);
       },
       error: (error) => {
-        console.error('Error al generar reporte de inventario:', error);
-        alert('Hubo un error al generar el reporte de inventario.');
+        console.error('Error al cargar inventario general:', error);
         this.isLoading = false;
+        alert('Error al cargar el reporte de Inventario General.');
       }
     });
   }
@@ -53,15 +54,15 @@ export class ReportesComponent implements OnInit {
     this.isLoading = true;
     this.resourceService.getResources().subscribe({
       next: (data: Recurso[]) => {
-        this.reportData = data.filter(recurso => recurso.estado.toLowerCase() === 'bodega');
+        this.reportData = data.filter(r => r.estado === 'Bodega');
         this.currentReportTitle = 'Recursos en Bodega';
         this.isLoading = false;
         console.log('Reporte Recursos en Bodega:', this.reportData);
       },
       error: (error) => {
-        console.error('Error al generar reporte de recursos en bodega:', error);
-        alert('Hubo un error al generar el reporte de recursos en bodega.');
+        console.error('Error al cargar recursos en bodega:', error);
         this.isLoading = false;
+        alert('Error al cargar el reporte de Recursos en Bodega.');
       }
     });
   }
@@ -73,15 +74,15 @@ export class ReportesComponent implements OnInit {
     this.isLoading = true;
     this.resourceService.getResources().subscribe({
       next: (data: Recurso[]) => {
-        this.reportData = data.filter(recurso => recurso.estado.toLowerCase() === 'asignado');
+        this.reportData = data.filter(r => r.estado === 'Asignado');
         this.currentReportTitle = 'Recursos Asignados';
         this.isLoading = false;
         console.log('Reporte Recursos Asignados:', this.reportData);
       },
       error: (error) => {
-        console.error('Error al generar reporte de recursos asignados:', error);
-        alert('Hubo un error al generar el reporte de recursos asignados.');
+        console.error('Error al cargar recursos asignados:', error);
         this.isLoading = false;
+        alert('Error al cargar el reporte de Recursos Asignados.');
       }
     });
   }
@@ -89,96 +90,21 @@ export class ReportesComponent implements OnInit {
   /**
    * Genera el reporte de Recursos en Mantenimiento.
    */
-  generateMaintenanceResourcesReport(): void {
+  generateMantenimientoResourcesReport(): void {
     this.isLoading = true;
     this.resourceService.getResources().subscribe({
       next: (data: Recurso[]) => {
-        this.reportData = data.filter(recurso => recurso.estado.toLowerCase() === 'mantenimiento');
+        this.reportData = data.filter(r => r.estado === 'Mantenimiento');
         this.currentReportTitle = 'Recursos en Mantenimiento';
         this.isLoading = false;
         console.log('Reporte Recursos en Mantenimiento:', this.reportData);
       },
       error: (error) => {
-        console.error('Error al generar reporte de recursos en mantenimiento:', error);
-        alert('Hubo un error al generar el reporte de recursos en mantenimiento.');
+        console.error('Error al cargar recursos en mantenimiento:', error);
         this.isLoading = false;
+        alert('Error al cargar el reporte de Recursos en Mantenimiento.');
       }
     });
-  }
-
-  /**
-   * Genera el reporte de Recursos Eliminados.
-   */
-  generateDeletedResourcesReport(): void {
-    this.isLoading = true;
-    this.resourceService.getResources().subscribe({
-      next: (data: Recurso[]) => {
-        this.reportData = data.filter(recurso => recurso.estado.toLowerCase() === 'eliminado');
-        this.currentReportTitle = 'Recursos Eliminados';
-        this.isLoading = false;
-        console.log('Reporte Recursos Eliminados:', this.reportData);
-      },
-      error: (error) => {
-        console.error('Error al generar reporte de recursos eliminados:', error);
-        alert('Hubo un error al generar el reporte de recursos eliminados.');
-        this.isLoading = false;
-      }
-    });
-  }
-
-  /**
-   * Genera el reporte de Recursos de Computación (por categoría).
-   */
-  generateComputacionResourcesReport(): void {
-    this.isLoading = true;
-    this.resourceService.getResources().subscribe({
-      next: (data: Recurso[]) => {
-        this.reportData = data.filter(recurso => recurso.categoria.toLowerCase() === 'computacion');
-        this.currentReportTitle = 'Recursos de Computación';
-        this.isLoading = false;
-        console.log('Reporte Recursos de Computación:', this.reportData);
-      },
-      error: (error) => {
-        console.error('Error al generar reporte de recursos de computación:', error);
-        alert('Hubo un error al generar el reporte de recursos de computación.');
-        this.isLoading = false;
-      }
-    });
-  }
-
-  /**
-   * Genera el reporte de Recursos con Garantía Vencida.
-   */
-  generateExpiredWarrantyResourcesReport(): void {
-    this.isLoading = true;
-    this.resourceService.getResources().subscribe({
-      next: (data: Recurso[]) => {
-        this.reportData = data.filter(recurso => this.isWarrantyExpired(recurso.fechaVencimientoGarantia || ''));
-        this.currentReportTitle = 'Recursos con Garantía Vencida';
-        this.isLoading = false;
-        console.log('Reporte Recursos con Garantía Vencida:', this.reportData);
-      },
-      error: (error) => {
-        console.error('Error al generar reporte de garantías vencidas:', error);
-        alert('Hubo un error al generar el reporte de garantías vencidas.');
-        this.isLoading = false;
-      }
-    });
-  }
-
-  /**
-   * Función de utilidad para verificar si una garantía ha vencido.
-   * @param warrantyDateString La fecha de vencimiento de la garantía en formato string.
-   * @returns true si la garantía ha vencido, false en caso contrario.
-   */
-  private isWarrantyExpired(warrantyDateString: string): boolean {
-    if (!warrantyDateString) return false;
-    const warrantyDate = new Date(warrantyDateString);
-    const today = new Date();
-    // Normalizar a inicio del día para una comparación precisa
-    warrantyDate.setHours(0, 0, 0, 0);
-    today.setHours(0, 0, 0, 0);
-    return warrantyDate < today;
   }
 
   /**
@@ -188,15 +114,15 @@ export class ReportesComponent implements OnInit {
     this.isLoading = true;
     this.prestamosService.getLoans().subscribe({
       next: (data: Loan[]) => {
-        this.reportData = data.filter(loan => loan.estado.toLowerCase() === 'activo');
+        this.reportData = data.filter(loan => loan.estado === 'activo');
         this.currentReportTitle = 'Préstamos Activos';
         this.isLoading = false;
         console.log('Reporte Préstamos Activos:', this.reportData);
       },
       error: (error) => {
-        console.error('Error al generar reporte de préstamos activos:', error);
-        alert('Hubo un error al generar el reporte de préstamos activos.');
+        console.error('Error al cargar préstamos activos:', error);
         this.isLoading = false;
+        alert('Error al cargar el reporte de Préstamos Activos.');
       }
     });
   }
@@ -208,15 +134,18 @@ export class ReportesComponent implements OnInit {
     this.isLoading = true;
     this.prestamosService.getLoans().subscribe({
       next: (data: Loan[]) => {
-        this.reportData = data.filter(loan => loan.estado.toLowerCase() === 'atrasado');
+        const today = new Date();
+        this.reportData = data.filter(loan =>
+          loan.estado === 'activo' && new Date(loan.fechaDevolucion) < today
+        );
         this.currentReportTitle = 'Préstamos Atrasados';
         this.isLoading = false;
         console.log('Reporte Préstamos Atrasados:', this.reportData);
       },
       error: (error) => {
-        console.error('Error al generar reporte de préstamos atrasados:', error);
-        alert('Hubo un error al generar el reporte de préstamos atrasados.');
+        console.error('Error al cargar préstamos atrasados:', error);
         this.isLoading = false;
+        alert('Error al cargar el reporte de Préstamos Atrasados.');
       }
     });
   }
@@ -228,26 +157,60 @@ export class ReportesComponent implements OnInit {
     this.isLoading = true;
     this.prestamosService.getLoans().subscribe({
       next: (data: Loan[]) => {
-        this.reportData = data.filter(loan => loan.estado.toLowerCase() === 'devuelto');
+        this.reportData = data.filter(loan => loan.estado === 'devuelto');
         this.currentReportTitle = 'Préstamos Devueltos';
         this.isLoading = false;
         console.log('Reporte Préstamos Devueltos:', this.reportData);
       },
       error: (error) => {
-        console.error('Error al generar reporte de préstamos devueltos:', error);
-        alert('Hubo un error al generar el reporte de préstamos devueltos.');
+        console.error('Error al cargar préstamos devueltos:', error);
         this.isLoading = false;
+        alert('Error al cargar el reporte de Préstamos Devueltos.');
       }
     });
   }
 
   /**
-   * Limpia los datos del reporte y el título.
+   * Genera el reporte de Recursos de Computación.
    */
-  clearReport(): void {
-    this.reportData = [];
-    this.currentReportTitle = '';
-    this.isLoading = false;
+  generateComputacionResourcesReport(): void {
+    this.isLoading = true;
+    this.resourceService.getResources().subscribe({
+      next: (data: Recurso[]) => {
+        this.reportData = data.filter(r => r.categoria === 'Computacion');
+        this.currentReportTitle = 'Recursos de Computación';
+        this.isLoading = false;
+        console.log('Reporte Recursos de Computación:', this.reportData);
+      },
+      error: (error) => {
+        console.error('Error al cargar recursos de computación:', error);
+        this.isLoading = false;
+        alert('Error al cargar el reporte de Recursos de Computación.');
+      }
+    });
+  }
+
+  /**
+   * Genera el reporte de Recursos con Garantía Vencida.
+   */
+  generateExpiredWarrantyResourcesReport(): void {
+    this.isLoading = true;
+    this.resourceService.getResources().subscribe({
+      next: (data: Recurso[]) => {
+        const today = new Date();
+        this.reportData = data.filter(r =>
+          r.fechaVencimientoGarantia && new Date(r.fechaVencimientoGarantia) < today
+        );
+        this.currentReportTitle = 'Recursos con Garantía Vencida';
+        this.isLoading = false;
+        console.log('Reporte Recursos con Garantía Vencida:', this.reportData);
+      },
+      error: (error) => {
+        console.error('Error al cargar recursos con garantía vencida:', error);
+        this.isLoading = false;
+        alert('Error al cargar el reporte de Recursos con Garantía Vencida.');
+      }
+    });
   }
 
   /**
@@ -261,7 +224,6 @@ export class ReportesComponent implements OnInit {
       'Recursos en Bodega',
       'Recursos Asignados',
       'Recursos en Mantenimiento',
-      'Recursos Eliminados',
       'Recursos de Computación',
       'Recursos con Garantía Vencida'
     ].includes(title);
@@ -304,16 +266,110 @@ export class ReportesComponent implements OnInit {
       case 'asignado':
         return 'text-bg-info';
       case 'mantenimiento':
-        return 'text-bg-dark';
-      case 'eliminado':
-        return 'text-bg-danger';
-      default:
         return 'text-bg-primary';
+      case 'eliminado':
+        return 'text-bg-dark';
+      default:
+        return 'text-bg-light text-dark';
     }
   }
 
   getTitleCase(text: string): string {
     if (!text) return '';
     return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+  }
+
+  // --- Funciones para la descarga de reportes (ya implementadas) ---
+
+  /**
+   * Genera el contenido del reporte actual en formato CSV.
+   * @returns El contenido CSV como una cadena de texto.
+   */
+  generateCsvContent(): string {
+    if (!this.reportData || this.reportData.length === 0) {
+      return '';
+    }
+
+    let csv = '';
+    const headers: string[] = [];
+
+    // Definir encabezados basados en el tipo de reporte
+    if (this.isResourceReport(this.currentReportTitle)) {
+      csv += 'ID,Modelo,No. Serie,Categoría,Estado,Email Usuario,Fecha Garantía\n';
+      headers.push('idRecurso', 'modelo', 'numeroSerie', 'categoria', 'estado', 'emailUsuario', 'fechaVencimientoGarantia');
+    } else if (this.isLoanReport(this.currentReportTitle)) {
+      csv += 'Recurso,Solicitante,Fecha Préstamo,Fecha Devolución,Estado\n';
+      headers.push('recurso', 'solicitante', 'fechaPrestamo', 'fechaDevolucion', 'estado');
+    } else {
+      // Si no es un tipo de reporte conocido, intenta generar encabezados genéricos
+      const firstItem = this.reportData[0];
+      for (const key in firstItem) {
+        if (Object.prototype.hasOwnProperty.call(firstItem, key)) {
+          csv += `"${key}",`;
+          headers.push(key);
+        }
+      }
+      csv = csv.slice(0, -1) + '\n'; // Eliminar la última coma y añadir salto de línea
+    }
+
+    // Añadir filas de datos
+    this.reportData.forEach(item => {
+      const row: string[] = [];
+      headers.forEach(header => {
+        if (header === 'recurso') { // Manejo especial para el recurso en préstamos
+          const resourceInfo = item.recurso ? `${item.recurso.modelo} (N° Serie: ${item.recurso.numeroSerie})` : 'N/A';
+          row.push(`"${resourceInfo}"`);
+        } else if (header === 'fechaPrestamo' || header === 'fechaDevolucion' || header === 'fechaVencimientoGarantia') {
+          row.push(`"${this.formatDate(item[header])}"`);
+        } else if (header === 'estado') {
+            row.push(`"${this.getTitleCase(item[header])}"`);
+        } else if (item[header] !== undefined && item[header] !== null) {
+          row.push(`"${String(item[header]).replace(/"/g, '""')}"`); // Escapar comillas dobles
+        } else {
+          row.push('');
+        }
+      });
+      csv += row.join(',') + '\n';
+    });
+
+    return csv;
+  }
+
+  /**
+   * Descarga el reporte actual como un archivo CSV.
+   */
+  downloadReport(): void {
+    if (this.reportData.length === 0) {
+      alert('No hay datos en el reporte para descargar.');
+      return;
+    }
+
+    const csvContent = this.generateCsvContent();
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const fileName = `${this.currentReportTitle.replace(/ /g, '_')}_${new Date().toISOString().slice(0, 10)}.csv`;
+
+    const link = document.createElement('a');
+    if (link.download !== undefined) { // Feature detection for HTML5 download attribute
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', fileName);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url); // Clean up the URL object
+    } else {
+      // Fallback for older browsers (not typically needed in modern Angular apps)
+      window.open('data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent));
+    }
+  }
+
+  /**
+   * Limpia los datos del reporte y el título actual.
+   */
+  clearReport(): void {
+    this.reportData = [];
+    this.currentReportTitle = '';
+    this.isLoading = false; // Asegurarse de que el estado de carga también se resetee
   }
 }

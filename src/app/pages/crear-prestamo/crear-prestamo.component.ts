@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
 import { Recurso, ResourceService } from '../../services/resource.service';
 import { Loan, PrestamosService } from '../../services/prestamos.service';
 
@@ -32,6 +32,10 @@ export class CrearPrestamoComponent implements OnInit{
   @Output() loanCreated = new EventEmitter<void>(); // Evento para notificar al padre que un préstamo fue creado
 
   fechasPrestamoInvalidas: boolean = false;
+
+   @ViewChild('loanForm') loanForm: NgForm | undefined;
+
+   isLoading: boolean = false;
 
   constructor(
     private resourceService: ResourceService, // Inyectar ResourceService
@@ -146,20 +150,22 @@ export class CrearPrestamoComponent implements OnInit{
    * Maneja el envío del formulario para crear un nuevo préstamo.
    */
   createLoan(): void {
-    // Validaciones básicas antes de enviar
-    if (!this.newLoan.recursoId || !this.newLoan.fechaPrestamo || !this.newLoan.solicitante) {
-      alert('Por favor, complete todos los campos obligatorios.');
+    
+    if (this.isLoading) {
       return;
     }
 
-    // Ejecuta la validación de fechas justo antes de enviar
-     this.validateLoanDates();
-    if (this.fechasPrestamoInvalidas) {
-      alert('La fecha de devolución no puede ser anterior a la fecha de préstamo.');
-      return; // Detiene el envío del formulario
+    if (this.newLoan.recursoId === 0 && this.selectedRecursoText.length > 0) {
+      this.isInvalidRecursoSelection = true;
+      return;
     }
 
-    console.log('Intentando crear préstamo:', this.newLoan);
+    if (this.fechasPrestamoInvalidas) {
+      return;
+    }
+
+    // Marca que la operación está en curso
+    this.isLoading = true; // **Activamos el estado de carga**
 
     this.prestamosService.saveLoan(this.newLoan).subscribe({
       next: (response) => {
@@ -167,11 +173,12 @@ export class CrearPrestamoComponent implements OnInit{
         alert('Préstamo registrado con éxito!');
         this.loanCreated.emit(); // Notificar al componente padre
         this.resetForm(); // Limpiar el formulario
-        this.closeModal(); // Cerrar el modal (asumiendo que es un modal)
+        this.isLoading = false; 
       },
       error: (error) => {
         console.error('Error al crear el préstamo:', error);
         alert('Hubo un error al registrar el préstamo. Por favor, intente de nuevo.');
+        this.isLoading = false;
       }
     });
   }
@@ -192,21 +199,14 @@ export class CrearPrestamoComponent implements OnInit{
     this.isInvalidRecursoSelection = false; 
     this.filteredRecursos = []; // Limpiar las sugerencias filtradas
     this.showSuggestions = false; // Ocultar las sugerencias
+
+    // **Reinicia el estado de validación del formulario utilizando NgForm**
+    if (this.loanForm) {
+      this.loanForm.resetForm(this.newLoan); // **Esta línea es crucial**
+    }
+    this.loadAvailableResources();
   }
 
-  /**
-   * Cierra el modal, emitiendo un evento o interactuando con la API de Bootstrap.
-   * Esto requiere que el componente padre escuche este evento o que Bootstrap esté cargado globalmente.
-   */
-  closeModal(): void {
-    // Ejemplo para cerrar un modal de Bootstrap si tienes acceso a la instancia global
-    const modalElement = document.getElementById('crearPrestamoModal'); // Asegúrate de que este ID coincida con tu HTML
-    if (modalElement) {
-      const modal = (window as any).bootstrap.Modal.getInstance(modalElement);
-      if (modal) {
-        modal.hide();
-      }
-    }
-  }
+  
 
 }

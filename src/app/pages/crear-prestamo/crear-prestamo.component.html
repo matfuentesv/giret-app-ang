@@ -1,19 +1,24 @@
 <form (ngSubmit)="createLoan()" #loanForm="ngForm"> 
 
-  <div class="mb-3 position-relative"> <label for="recursoAsociado" class="form-label">Recurso Asociado</label>
+  <div class="mb-3 position-relative"> 
+    <label for="recursoAsociado" class="form-label">Recurso Asociado</label>
     <input
       type="text"
       class="form-control"
       id="recursoAsociado"
       name="recursoAsociadoInput"
       [(ngModel)]="selectedRecursoText"
-      (input)="onRecursoInput()"         (blur)="onRecursoBlur()"           required #recursoAsociadoInput="ngModel">
+      (input)="onRecursoInput()"
+      (blur)="onRecursoBlur()"
+      required
+      #recursoAsociadoInput="ngModel">
 
     <div *ngIf="showSuggestions && filteredRecursos.length > 0" class="suggestions-list">
       <div
         *ngFor="let recurso of filteredRecursos"
         class="suggestion-item"
-        (mousedown)="selectRecurso(recurso)"> {{ recurso.modelo }} (N° Serie: {{ recurso.numeroSerie }})
+        (mousedown)="selectRecurso(recurso)">
+        {{ recurso.modelo }} (N° Serie: {{ recurso.numeroSerie }})
       </div>
     </div>
 
@@ -24,12 +29,14 @@
       Seleccione un recurso válido de la lista.
     </div>
   </div>
-  
+
   <div class="mb-3">
     <label for="solicitante" class="form-label">Solicitante</label>
-    <input type="text" class="form-control" id="solicitante" name="solicitante" [(ngModel)]="newLoan.solicitante" placeholder="Nombre completo del solicitante" required #solicitante="ngModel">
+    <input type="text" class="form-control" id="solicitante" name="solicitante" [(ngModel)]="newLoan.solicitante" required minlength="3" maxlength="100" #solicitante="ngModel">
     <div *ngIf="solicitante.invalid && (solicitante.dirty || solicitante.touched)" class="text-danger">
       <div *ngIf="solicitante.errors?.['required']">El solicitante es requerido.</div>
+      <div *ngIf="solicitante.errors?.['minlength']">El solicitante debe tener al menos 3 caracteres.</div>
+      <div *ngIf="solicitante.errors?.['maxlength']">El solicitante no debe exceder los 100 caracteres.</div>
     </div>
   </div>
   
@@ -49,8 +56,11 @@
     </div>
   </div>
   
-  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-    <button type="button" class="btn btn-secondary" (click)="resetForm()">Limpiar</button>
-    <button type="submit" class="btn btn-primary" [disabled]="!loanForm.form.valid || fechasPrestamoInvalidas">Registrar Préstamo</button>
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+    <button type="submit" class="btn btn-primary" [disabled]="loanForm.invalid || fechasPrestamoInvalidas || isInvalidRecursoSelection || isLoading">
+      <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+      {{ isLoading ? 'Registrando...' : 'Registrar Préstamo' }}
+    </button>
   </div>
 </form>

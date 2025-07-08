@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core'; // **Importa ViewChild**
 import { CognitoService } from '../../auth/cognito.service';
 import { Subscription } from 'rxjs';
 import { DetallesPrestamoComponent } from '../detalles-prestamo/detalles-prestamo.component';
@@ -28,13 +28,15 @@ export class InventarioComponent implements OnInit, OnDestroy {
 
   userEmail: string | null = null;
   private userAttributesSubscription: Subscription | undefined;
-  recursos: Recurso[] = []; // ¡Aquí se declara la propiedad 'recursos'!
-  private recursosSubscription: Subscription | undefined; // Para desuscribirse de la carga de recursos
-  searchTerm: string = ''; // Término de búsqueda para el input
-  selectedEstado: string = 'Filtrar por estado'; // Estado seleccionado en el dropdown, inicializado con el texto de la opción
-  filteredRecursos: Recurso[] = []; // Almacena los recursos que se muestran en la tabla (después de filtrar/buscar)
+  recursos: Recurso[] = [];
+  private recursosSubscription: Subscription | undefined;
+  searchTerm: string = '';
+  selectedEstado: string = 'Filtrar por estado';
+  filteredRecursos: Recurso[] = [];
   selectedRecursoForDetails: Recurso | null = null;
   selectedRecursoForEdit: Recurso | null = null;
+
+  @ViewChild(CrearRecursoComponent) crearRecursoComponent!: CrearRecursoComponent; // **Referencia al componente hijo**
   
   constructor(
     private cognitoService: CognitoService,
@@ -42,7 +44,6 @@ export class InventarioComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Suscripción para obtener el email del usuario 
     this.userAttributesSubscription = this.cognitoService.getUserAttributes().subscribe(
       attributes => {
         if (attributes) {
@@ -57,19 +58,22 @@ export class InventarioComponent implements OnInit, OnDestroy {
       }
     );
 
-    // Llama al método para cargar los recursos desde el backend
     this.getResources();
+
+    // **Añadir un listener al evento 'hidden.bs.modal' del modal de crear recurso**
+    const crearRecursoModal = document.getElementById('crearRecursoModal');
+    if (crearRecursoModal) {
+      crearRecursoModal.addEventListener('hidden.bs.modal', () => {
+        this.onCrearRecursoModalHidden();
+      });
+    }
   }
 
-  /**
-   * Obtiene la lista de recursos del backend usando el ResourceService.
-   */
   getResources(): void {
     this.recursosSubscription = this.resourceService.getResources().subscribe(
       (data: Recurso[]) => {
-        this.recursos = data; // Asigna los datos obtenidos a la propiedad 'recursos'
+        this.recursos = data;
         this.applyFilters();
-        console.log('Recursos cargados:', this.recursos); 
       },
       (error) => {
         console.error('Error al cargar los recursos:', error);
@@ -78,22 +82,23 @@ export class InventarioComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    //desuscribirse de los Observables para evitar fugas de memoria
     if (this.userAttributesSubscription) {
       this.userAttributesSubscription.unsubscribe();
     }
     if (this.recursosSubscription) {
       this.recursosSubscription.unsubscribe();
     }
+
+    // Limpiar el listener al destruir el componente
+    const crearRecursoModal = document.getElementById('crearRecursoModal');
+    if (crearRecursoModal) {
+      crearRecursoModal.removeEventListener('hidden.bs.modal', this.onCrearRecursoModalHidden);
+    }
   }
 
-  /**
-   * Aplica los filtros de búsqueda y estado a la lista de recursos.
-   */
   applyFilters(): void {
-    let tempRecursos = [...this.recursos]; // Crea una copia para no modificar el array original
+    let tempRecursos = [...this.recursos];
 
-    // Filtrar por término de búsqueda (modelo o número de serie)
     if (this.searchTerm && this.searchTerm.trim() !== '') {
       const lowerCaseSearchTerm = this.searchTerm.toLowerCase().trim();
       tempRecursos = tempRecursos.filter(recurso =>
@@ -102,53 +107,36 @@ export class InventarioComponent implements OnInit, OnDestroy {
       );
     }
 
-    // Filtrar por estado seleccionado
     if (this.selectedEstado && this.selectedEstado !== 'Filtrar por estado') {
       tempRecursos = tempRecursos.filter(recurso =>
         recurso.estado === this.selectedEstado
       );
     }
 
-    this.filteredRecursos = tempRecursos; // Actualiza la lista que se muestra en la tabla
+    this.filteredRecursos = tempRecursos;
   }
 
-  //Método para establecer el recurso a mostrar en el modal de detalles
   viewResourceDetails(recurso: Recurso): void {
     this.selectedRecursoForDetails = recurso;
-    console.log('Recurso seleccionado para detalles:', this.selectedRecursoForDetails);
   }
 
-   //Método para establecer el recurso a editar
   editResource(recurso: Recurso): void {
-    this.selectedRecursoForEdit = { ...recurso }; // Pasa una copia del recurso para evitar modificación directa
-    console.log('Recurso seleccionado para editar:', this.selectedRecursoForEdit);
+    this.selectedRecursoForEdit = { ...recurso };
   }
 
-  //Método que se ejecuta cuando el EditarRecursoComponent emite resourceUpdated
   onResourceEdited(updatedRecurso: Recurso): void {
-    console.log('Recurso actualizado recibido del componente hijo:', updatedRecurso);
-    this.getResources(); // Recargar la lista de recursos para reflejar los cambios
-    this.closeEditModal(); // Cerrar el modal después de la actualización exitosa
+    this.getResources();
+    this.closeEditModal();
   }
 
-  
-  /**
-   * Método para cerrar el modal de edición.
-   * Se ha modificado para asegurar que la instancia del modal de Bootstrap se obtenga correctamente
-   * y que el backdrop se elimine.
-   */
   closeEditModal(): void {
     const modalElement = document.getElementById('editarRecursoModal');
     if (modalElement) {
-  
       let modalInstance = (window as any).bootstrap.Modal.getInstance(modalElement);
-
       if (!modalInstance) {
         modalInstance = new (window as any).bootstrap.Modal(modalElement);
       }
-
       modalInstance.hide();
-
       const body = document.body;
       if (body.classList.contains('modal-open')) {
           body.classList.remove('modal-open');
@@ -157,9 +145,18 @@ export class InventarioComponent implements OnInit, OnDestroy {
       while (backdrops.length > 0) {
           backdrops[0].parentNode?.removeChild(backdrops[0]);
       }
-
     } else {
       console.warn("Elemento 'editarRecursoModal' no encontrado para cerrar el modal.");
+    }
+  }
+
+  /**
+   * Método para llamar al resetForm del componente hijo CrearRecursoComponent
+   * cuando el modal de crear recurso se cierra.
+   */
+  onCrearRecursoModalHidden(): void {
+    if (this.crearRecursoComponent) {
+      this.crearRecursoComponent.resetForm(); // **Llama al método resetForm del componente hijo**
     }
   }
 }

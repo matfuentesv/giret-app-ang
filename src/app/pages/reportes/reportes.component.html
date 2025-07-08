@@ -2,124 +2,125 @@
 
 <div class="row g-4">
   <div class="col-12 col-lg-4">
-  <div class="card shadow-sm border-0 mb-4">
-    <div class="card-body p-4">
-      <h5 class="card-title fw-bold mb-3">Reportes Predefinidos</h5>
-      <div class="report-buttons-scroll-container">
-        <div class="row g-3">
-          <div class="col-12">
-            <div class="d-grid">
-              <button class="btn btn-light border p-3 text-start" (click)="generateInventoryReport()">
-                <i class="fas fa-boxes me-2 text-primary"></i>Inventario General de Recursos
-              </button>
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-body p-4">
+        <h5 class="card-title fw-bold mb-3">Reportes Predefinidos</h5>
+        <div class="report-buttons-scroll-container">
+          <div class="row g-3">
+            <div class="col-12">
+              <div class="d-grid">
+                <button class="btn btn-light border p-3 text-start" (click)="generateInventoryReport()">
+                  <i class="fas fa-boxes me-2 text-primary"></i>Inventario General de Recursos
+                </button>
+              </div>
             </div>
-          </div>
-          <div class="col-12">
-            <div class="d-grid">
-              <button class="btn btn-light border p-3 text-start" (click)="generateBodegaResourcesReport()">
-                <i class="fas fa-warehouse me-2 text-success"></i>Recursos en Bodega
-              </button>
+            <div class="col-12">
+              <div class="d-grid">
+                <button class="btn btn-light border p-3 text-start" (click)="generateBodegaResourcesReport()">
+                  <i class="fas fa-warehouse me-2 text-success"></i>Recursos en Bodega
+                </button>
+              </div>
             </div>
-          </div>
-          <div class="col-12">
-            <div class="d-grid">
-              <button class="btn btn-light border p-3 text-start" (click)="generateAssignedResourcesReport()">
-                <i class="fas fa-user-tag me-2 text-info"></i>Recursos Asignados
-              </button>
+            <div class="col-12">
+              <div class="d-grid">
+                <button class="btn btn-light border p-3 text-start" (click)="generateAssignedResourcesReport()">
+                  <i class="fas fa-user-tag me-2 text-info"></i>Recursos Asignados
+                </button>
+              </div>
             </div>
-          </div>
-          <div class="col-12">
-            <div class="d-grid">
-              <button class="btn btn-light border p-3 text-start" (click)="generateMaintenanceResourcesReport()">
-                <i class="fas fa-tools me-2 text-dark"></i>Recursos en Mantenimiento
-              </button>
+            <div class="col-12">
+              <div class="d-grid">
+                <button class="btn btn-light border p-3 text-start" (click)="generateMantenimientoResourcesReport()">
+                  <i class="fas fa-tools me-2 text-secondary"></i>Recursos en Mantenimiento
+                </button>
+              </div>
             </div>
-          </div>
-          <div class="col-12">
-            <div class="d-grid">
-              <button class="btn btn-light border p-3 text-start" (click)="generateDeletedResourcesReport()">
-                <i class="fas fa-trash-alt me-2 text-secondary"></i>Recursos Eliminados
-              </button>
+            <div class="col-12">
+              <div class="d-grid">
+                <button class="btn btn-light border p-3 text-start" (click)="generateActiveLoansReport()">
+                  <i class="fas fa-handshake me-2 text-warning"></i>Préstamos Activos
+                </button>
+              </div>
             </div>
-          </div>
-          <div class="col-12">
-            <div class="d-grid">
-              <button class="btn btn-light border p-3 text-start" (click)="generateComputacionResourcesReport()">
-                <i class="fas fa-desktop me-2 text-warning"></i>Recursos de Computación
-              </button>
+            <div class="col-12">
+              <div class="d-grid">
+                <button class="btn btn-light border p-3 text-start" (click)="generateOverdueLoansReport()">
+                  <i class="fas fa-exclamation-triangle me-2 text-danger"></i>Préstamos Atrasados
+                </button>
+              </div>
             </div>
-          </div>
-          <div class="col-12">
-            <div class="d-grid">
-              <button class="btn btn-light border p-3 text-start" (click)="generateExpiredWarrantyResourcesReport()">
-                <i class="fas fa-calendar-times me-2 text-danger"></i>Garantías Vencidas
-              </button>
+            <div class="col-12">
+              <div class="d-grid">
+                <button class="btn btn-light border p-3 text-start" (click)="generateReturnedLoansReport()">
+                  <i class="fas fa-check-circle me-2 text-muted"></i>Préstamos Devueltos
+                </button>
+              </div>
             </div>
-          </div>
-          <hr class="my-3">
-          <div class="col-12">
-            <div class="d-grid">
-              <button class="btn btn-light border p-3 text-start" (click)="generateActiveLoansReport()">
-                <i class="fas fa-user-clock me-2 text-warning"></i>Préstamos Activos
-              </button>
+            <div class="col-12">
+              <div class="d-grid">
+                <button class="btn btn-light border p-3 text-start" (click)="generateComputacionResourcesReport()">
+                  <i class="fas fa-desktop me-2 text-primary"></i>Recursos de Computación
+                </button>
+              </div>
             </div>
-          </div>
-          <div class="col-12">
-            <div class="d-grid">
-              <button class="btn btn-light border p-3 text-start" (click)="generateOverdueLoansReport()">
-                <i class="fas fa-exclamation-triangle me-2 text-danger"></i>Préstamos Atrasados
-              </button>
-            </div>
-          </div>
-          <div class="col-12">
-            <div class="d-grid">
-              <button class="btn btn-light border p-3 text-start" (click)="generateReturnedLoansReport()">
-                <i class="fas fa-check-circle me-2 text-info"></i>Préstamos Devueltos
-              </button>
-            </div>
-          </div>
-          <div class="col-12 mt-4">
-            <div class="d-grid">
-              <button class="btn btn-outline-secondary p-3" (click)="clearReport()">
-                <i class="fas fa-eraser me-2"></i>Limpiar Reporte
-              </button>
+            <div class="col-12">
+              <div class="d-grid">
+                <button class="btn btn-light border p-3 text-start" (click)="generateExpiredWarrantyResourcesReport()">
+                  <i class="fas fa-calendar-times me-2 text-danger"></i>Recursos con Garantía Vencida
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
   <div class="col-12 col-lg-8">
-  <div class="card shadow-sm border-0 h-100">
-    <div class="card-body p-4">
-      <h5 class="card-title fw-bold mb-3">
-        {{ currentReportTitle || 'Vista Previa del Reporte' }}
-        <span *ngIf="isLoading" class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true"></span>
-      </h5>
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-body p-4">
+        <h5 class="card-title fw-bold mb-3 d-flex justify-content-between align-items-center">
+          {{ currentReportTitle || 'Reporte de Préstamos e Inventario' }}
+          <div>
+            <button
+              *ngIf="reportData.length > 0 && !isLoading"
+              class="btn btn-outline-primary btn-sm me-2"
+              (click)="downloadReport()"
+              title="Descargar Reporte">
+              <i class="fas fa-download me-1"></i> Descargar CSV
+            </button>
+            <button
+              *ngIf="reportData.length > 0 && !isLoading"
+              class="btn btn-outline-secondary btn-sm"
+              (click)="clearReport()"
+              title="Limpiar Reporte">
+              <i class="fas fa-eraser me-1"></i> Limpiar Reporte
+            </button>
+          </div>
+        </h5>
 
-      <div class="report-table-scroll-container">
-        <div *ngIf="reportData.length > 0" class="table-responsive">
-          <table class="table table-hover table-striped">
-            <thead>
-              <tr>
-                <ng-container *ngIf="isResourceReport(currentReportTitle)">
-                  <th>Modelo</th>
-                  <th>N° Serie</th>
-                  <th>Categoría</th>
-                  <th>Estado</th>
-                  <th>Usuario Asignado</th>
-                  <th *ngIf="currentReportTitle === 'Recursos con Garantía Vencida'">Garantía Vence</th>
-                </ng-container>
-                <ng-container *ngIf="isLoanReport(currentReportTitle)">
-                  <th>Recurso</th>
-                  <th>Solicitante</th>
-                  <th>Fecha Préstamo</th>
-                  <th>Fecha Devolución</th>
-                  <th>Estado</th>
-                </ng-container>
-              </tr>
+        <div *ngIf="reportData.length > 0 && !isLoading" class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="bg-light">
+              <ng-container *ngIf="isResourceReport(currentReportTitle)">
+                <tr>
+                  <th scope="col" class="p-3">Modelo</th>
+                  <th scope="col" class="p-3">No. Serie</th>
+                  <th scope="col" class="p-3">Categoría</th>
+                  <th scope="col" class="p-3">Estado</th>
+                  <th scope="col" class="p-3">Email Usuario</th>
+                  <th *ngIf="currentReportTitle === 'Recursos con Garantía Vencida'" scope="col" class="p-3">Fecha Garantía</th>
+                </tr>
+              </ng-container>
+              <ng-container *ngIf="isLoanReport(currentReportTitle)">
+                <tr>
+                  <th scope="col" class="p-3">Recurso</th>
+                  <th scope="col" class="p-3">Solicitante</th>
+                  <th scope="col" class="p-3">Fecha Préstamo</th>
+                  <th scope="col" class="p-3">Fecha Devolución</th>
+                  <th scope="col" class="p-3">Estado</th>
+                </tr>
+              </ng-container>
             </thead>
             <tbody>
               <ng-container *ngIf="isResourceReport(currentReportTitle)">
@@ -134,7 +135,7 @@
               </ng-container>
               <ng-container *ngIf="isLoanReport(currentReportTitle)">
                 <tr *ngFor="let loan of reportData">
-                  <td>{{ loan.resource?.modelo || 'N/A' }} ({{ loan.resource?.numeroSerie || 'N/A' }})</td>
+                  <td>{{ loan.recurso?.modelo || 'N/A' }} ({{ loan.recurso?.numeroSerie || 'N/A' }})</td>
                   <td>{{ loan.solicitante }}</td>
                   <td>{{ formatDate(loan.fechaPrestamo) }}</td>
                   <td>{{ formatDate(loan.fechaDevolucion) }}</td>
@@ -144,15 +145,17 @@
             </tbody>
           </table>
         </div>
-      </div>
 
-      <div *ngIf="reportData.length === 0 && !isLoading" class="text-muted mt-4">
-        Selecciona un reporte predefinido para ver los resultados aquí.
-      </div>
-      <div *ngIf="isLoading" class="text-center mt-4">
-        Cargando datos del reporte...
+        <div *ngIf="reportData.length === 0 && !isLoading" class="text-muted mt-4">
+          Selecciona un reporte predefinido para ver los resultados aquí.
+        </div>
+        <div *ngIf="isLoading" class="text-center mt-4">
+          Cargando datos...
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </div>

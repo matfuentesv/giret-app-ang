@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CrearPrestamoComponent } from '../crear-prestamo/crear-prestamo.component';
 import { PrestamosService, Loan, Resource } from '../../services/prestamos.service'; // Importa PrestamosService e interfaces
 import { FormsModule } from '@angular/forms'; // Importa FormsModule para ngModel
@@ -20,10 +20,16 @@ export class PrestamosComponent implements OnInit {
   searchText: string = ''; // Propiedad para el texto de búsqueda del input
   selectedStatus: string = 'Filtrar por estado...'; // Propiedad para el estado seleccionado en el select
 
+  @ViewChild(CrearPrestamoComponent) crearPrestamoComponent!: CrearPrestamoComponent;
+
   constructor(private prestamosService: PrestamosService) { } // Inyecta PrestamosService
 
   ngOnInit(): void {
     this.getLoans(); // Obtiene los préstamos cuando el componente se inicializa
+    const crearPrestamoModal = document.getElementById('crearPrestamoModal');
+    if (crearPrestamoModal) {
+      crearPrestamoModal.addEventListener('hidden.bs.modal', this.onCrearPrestamoModalHidden.bind(this)); 
+    }
   }
 
   getLoans(): void {
@@ -89,36 +95,16 @@ export class PrestamosComponent implements OnInit {
   }
 
   /**
-   * Método que se ejecuta cuando se ha creado un nuevo préstamo desde el componente hijo.
-   * Recarga la lista de préstamos y cierra el modal de creación.
+   * Método para cerrar el modal de Bootstrap programáticamente.
    */
-  onLoanCreated(): void {
-    console.log('Evento loanCreated recibido. Recargando préstamos...');
-    this.getLoans(); // Recargar la lista de préstamos
-    this.closeCreateLoanModal(); // Cerrar el modal
-  }
-
-  /**
-   * Cierra el modal de creación de préstamo.
-   * Modificado para intentar obtener la instancia o usar un enfoque más directo.
-   */
-  closeCreateLoanModal(): void {
+  closeCrearPrestamoModal(): void {
     const modalElement = document.getElementById('crearPrestamoModal');
     if (modalElement) {
-      // Intenta obtener la instancia existente del modal de Bootstrap
-      let modalInstance = (window as any).bootstrap.Modal.getInstance(modalElement);
-
-      // Si no existe una instancia, puede que necesites crear una (común si el modal se abre con data-bs-target)
-      if (!modalInstance) {
-        modalInstance = new (window as any).bootstrap.Modal(modalElement);
+      const modal = bootstrap.Modal.getInstance(modalElement);
+      if (modal) {
+        modal.hide();
       }
-
-      // Ahora que tienes la instancia, la puedes ocultar
-      modalInstance.hide();
-
-      // Opcional: Remover el backdrop y la clase 'modal-open' del body
-      // A veces, si se queda el backdrop, puede ser por un problema con la clase 'modal-open' en el body.
-      // Esto es más un hack, la solución ideal es que 'modal.hide()' lo maneje.
+      // Asegurarse de que el backdrop se elimine si Bootstrap no lo hace automáticamente
       const body = document.body;
       if (body.classList.contains('modal-open')) {
           body.classList.remove('modal-open');
@@ -127,11 +113,20 @@ export class PrestamosComponent implements OnInit {
       while (backdrops.length > 0) {
           backdrops[0].parentNode?.removeChild(backdrops[0]);
       }
-
-    } else {
-      console.warn("Elemento 'crearPrestamoModal' no encontrado para cerrar el modal.");
     }
   }
+
+  /**
+   * Método que se ejecuta cuando se ha creado un nuevo préstamo desde el componente hijo.
+   * Recarga la lista de préstamos y cierra el modal de creación.
+   */
+  onLoanCreated(): void {
+    console.log('Evento loanCreated recibido. Recargando préstamos...');
+    this.getLoans(); // Recargar la lista de préstamos
+    this.closeCrearPrestamoModal(); // Cerrar el modal
+  }
+
+  
 
     /**
    * Registra la devolución de un préstamo.
@@ -172,5 +167,15 @@ export class PrestamosComponent implements OnInit {
         alert('Hubo un error al registrar la devolución. Por favor, revisa la consola.');
       }
     });
+  }
+
+  /**
+   * Método para llamar al resetForm del componente hijo CrearPrestamoComponent
+   * cuando el modal de crear préstamo se cierra.
+   */
+  onCrearPrestamoModalHidden(): void {
+    if (this.crearPrestamoComponent) {
+      this.crearPrestamoComponent.resetForm(); // **Llama al método resetForm del componente hijo**
+    }
   }
 }
