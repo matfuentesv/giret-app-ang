@@ -74,7 +74,7 @@ export class ReportesComponent implements OnInit {
     this.isLoading = true;
     this.resourceService.getResources().subscribe({
       next: (data: Recurso[]) => {
-        this.reportData = data.filter(r => r.estado === 'Asignado');
+        this.reportData = data.filter(r => r.estado === 'asignado');
         this.currentReportTitle = 'Recursos Asignados';
         this.isLoading = false;
         console.log('Reporte Recursos Asignados:', this.reportData);
@@ -94,7 +94,7 @@ export class ReportesComponent implements OnInit {
     this.isLoading = true;
     this.resourceService.getResources().subscribe({
       next: (data: Recurso[]) => {
-        this.reportData = data.filter(r => r.estado === 'Mantenimiento');
+        this.reportData = data.filter(r => r.estado === 'mantenimiento');
         this.currentReportTitle = 'Recursos en Mantenimiento';
         this.isLoading = false;
         console.log('Reporte Recursos en Mantenimiento:', this.reportData);
@@ -127,20 +127,20 @@ export class ReportesComponent implements OnInit {
     });
   }
 
+
   /**
    * Genera el reporte de Préstamos Atrasados.
    */
-  generateOverdueLoansReport(): void {
+   generateOverdueLoansReport(): void {
     this.isLoading = true;
     this.prestamosService.getLoans().subscribe({
       next: (data: Loan[]) => {
-        const today = new Date();
-        this.reportData = data.filter(loan =>
-          loan.estado === 'activo' && new Date(loan.fechaDevolucion) < today
-        );
+        // Modificación clave: Filtrar directamente por el estado 'atrasado'
+        // Se usa toLowerCase() para asegurar que la comparación no sea sensible a mayúsculas y minúsculas.
+        this.reportData = data.filter(loan => loan.estado.toLowerCase() === 'atrasado');
         this.currentReportTitle = 'Préstamos Atrasados';
         this.isLoading = false;
-        console.log('Reporte Préstamos Atrasados:', this.reportData);
+        console.log('Reporte Préstamos Atrasados (por estado "Atrasado"):', this.reportData);
       },
       error: (error) => {
         console.error('Error al cargar préstamos atrasados:', error);

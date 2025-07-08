@@ -20,7 +20,7 @@ export class SidebarComponent {
 
 logout(): void {
   const clientId = '3u0lfg3m1oqkd2802i1ktkf7jd';
-  const logoutUri = 'http://localhost:4200/home';
+  const logoutUri = 'https://giret-app-ang.fly.dev/home';
   const logoutUrl = `https://us-east-14aK8WcVnL.auth.us-east-1.amazoncognito.com/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}&federated=1`;
 
   localStorage.clear();
