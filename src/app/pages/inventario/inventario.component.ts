@@ -1,11 +1,12 @@
+// src/app/pages/inventario/inventario.component.ts
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core'; // **Importa ViewChild**
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { CognitoService } from '../../auth/cognito.service';
 import { Subscription } from 'rxjs';
 import { DetallesPrestamoComponent } from '../detalles-prestamo/detalles-prestamo.component';
 import { CrearRecursoComponent } from '../crear-recurso/crear-recurso.component';
-import { EditarRecursoComponent } from '../editar-recurso/editar-recurso.component'; 
-import { ResourceService, Recurso } from '../../services/resource.service'; 
+import { EditarRecursoComponent } from '../editar-recurso/editar-recurso.component';
+import { ResourceService, Recurso } from '../../services/resource.service';
 import { FormsModule } from '@angular/forms';
 
 // Importar Modal de Bootstrap para cerrar el modal programáticamente
@@ -24,7 +25,7 @@ declare var bootstrap: any;
   templateUrl: './inventario.component.html',
   styleUrl: './inventario.component.css'
 })
-export class InventarioComponent implements OnInit, OnDestroy { 
+export class InventarioComponent implements OnInit, OnDestroy {
 
   userEmail: string | null = null;
   private userAttributesSubscription: Subscription | undefined;
@@ -35,12 +36,13 @@ export class InventarioComponent implements OnInit, OnDestroy {
   filteredRecursos: Recurso[] = [];
   selectedRecursoForDetails: Recurso | null = null;
   selectedRecursoForEdit: Recurso | null = null;
+  isLoadingTable: boolean = false; // Add isLoadingTable and initialize to false
 
-  @ViewChild(CrearRecursoComponent) crearRecursoComponent!: CrearRecursoComponent; // **Referencia al componente hijo**
-  
+  @ViewChild(CrearRecursoComponent) crearRecursoComponent!: CrearRecursoComponent;
+
   constructor(
     private cognitoService: CognitoService,
-    private resourceService: ResourceService 
+    private resourceService: ResourceService
   ) {}
 
   ngOnInit(): void {
@@ -60,7 +62,6 @@ export class InventarioComponent implements OnInit, OnDestroy {
 
     this.getResources();
 
-    // **Añadir un listener al evento 'hidden.bs.modal' del modal de crear recurso**
     const crearRecursoModal = document.getElementById('crearRecursoModal');
     if (crearRecursoModal) {
       crearRecursoModal.addEventListener('hidden.bs.modal', () => {
@@ -70,15 +71,20 @@ export class InventarioComponent implements OnInit, OnDestroy {
   }
 
   getResources(): void {
-    this.recursosSubscription = this.resourceService.getResources().subscribe(
-      (data: Recurso[]) => {
+    this.isLoadingTable = true; // Set to true before fetching data
+    this.recursosSubscription = this.resourceService.getResources().subscribe({
+      next: (data: Recurso[]) => {
         this.recursos = data;
         this.applyFilters();
+        this.isLoadingTable = false; // Set to false on success
       },
-      (error) => {
+      error: (error) => {
         console.error('Error al cargar los recursos:', error);
+        this.isLoadingTable = false; // Set to false on error
+        // Optionally, show an alert or a message to the user
+        alert('No se pudieron cargar los recursos. Revisa la consola para más detalles.');
       }
-    );
+    });
   }
 
   ngOnDestroy(): void {
@@ -89,7 +95,6 @@ export class InventarioComponent implements OnInit, OnDestroy {
       this.recursosSubscription.unsubscribe();
     }
 
-    // Limpiar el listener al destruir el componente
     const crearRecursoModal = document.getElementById('crearRecursoModal');
     if (crearRecursoModal) {
       crearRecursoModal.removeEventListener('hidden.bs.modal', this.onCrearRecursoModalHidden);
@@ -150,13 +155,9 @@ export class InventarioComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Método para llamar al resetForm del componente hijo CrearRecursoComponent
-   * cuando el modal de crear recurso se cierra.
-   */
   onCrearRecursoModalHidden(): void {
     if (this.crearRecursoComponent) {
-      this.crearRecursoComponent.resetForm(); // **Llama al método resetForm del componente hijo**
+      this.crearRecursoComponent.resetForm();
     }
   }
 }

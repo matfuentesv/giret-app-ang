@@ -2,7 +2,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CognitoService } from '../../auth/cognito.service';
-import { Subscription } from 'rxjs';
+import { Subscription, forkJoin } from 'rxjs'; // Import forkJoin
 import { DashboardService, DashboardData, EstadoCount, LoanDue } from '../../services/dashboard.service';
 
 // Importaciones específicas para ng2-charts
@@ -31,8 +31,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   estadoCounts: EstadoCount[] = [];
   private estadoCountsSubscription: Subscription | undefined;
 
-  loansDue: LoanDue[] = []; // Asegúrate de que esta propiedad esté declarada e inicializada
+  loansDue: LoanDue[] = [];
   private loansDueSubscription: Subscription | undefined;
+
+  isLoading: boolean = true; // Initialize to true
 
   // --- Propiedades para el gráfico de pastel (Chart.js con ng2-charts) ---
   public pieChartData: ChartData<'pie', number[], string> = {
@@ -83,6 +85,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.isLoading = true; // Set to true at the beginning of ngOnInit
     this.userAttributesSubscription = this.cognitoService.getUserAttributes().subscribe(
       attributes => {
         this.userEmail = attributes ? attributes['email'] : null;
@@ -93,67 +96,59 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     );
 
-    this.loadDashboardData();
-    this.loadEstadoCounts();
-    this.loadLoansDue(); // Asegúrate de llamar a este método
+    // Use forkJoin to manage multiple observable subscriptions and set isLoading to false when all are complete
+    forkJoin([
+      this.dashboardService.getDashboardData(),
+      this.dashboardService.getCountByEstadoConPorcentaje(),
+      this.dashboardService.getLoansDue()
+    ]).subscribe({
+      next: ([dashboardData, estadoCounts, loansDue]) => {
+        this.dashboardData = dashboardData;
+        this.estadoCounts = estadoCounts;
+        this.loansDue = loansDue;
+        this.prepareChartData();
+        console.log('Todos los datos del dashboard cargados exitosamente.');
+      },
+      error: (error) => {
+        console.error('Error al cargar uno o más datos del dashboard:', error);
+        alert('Ocurrió un error al cargar algunos datos del dashboard. Revisa la consola para más detalles.');
+      },
+      complete: () => {
+        this.isLoading = false; // Set to false when all observables complete (success or error)
+      }
+    });
   }
 
   ngOnDestroy(): void {
     if (this.userAttributesSubscription) {
       this.userAttributesSubscription.unsubscribe();
     }
-    if (this.dashboardDataSubscription) {
+    // Subscriptions created with forkJoin are typically managed by forkJoin itself,
+    // but if you have other individual subscriptions, keep their unsubscriptions.
+    if (this.dashboardDataSubscription) { // These might not be needed if using forkJoin exclusively for data loading
       this.dashboardDataSubscription.unsubscribe();
     }
     if (this.estadoCountsSubscription) {
       this.estadoCountsSubscription.unsubscribe();
     }
-    if (this.loansDueSubscription) { // ¡Importante desuscribirse!
+    if (this.loansDueSubscription) {
       this.loansDueSubscription.unsubscribe();
     }
   }
 
+  // loadDashboardData, loadEstadoCounts, loadLoansDue methods can be removed
+  // or adapted if you still want to load them individually for other reasons,
+  // but for the loading spinner, forkJoin is more efficient.
   loadDashboardData(): void {
-    console.log('Cargando datos principales del dashboard...');
-    this.dashboardDataSubscription = this.dashboardService.getDashboardData().subscribe({
-      next: (data: DashboardData) => {
-        this.dashboardData = data;
-        console.log('Datos principales del dashboard cargados:', this.dashboardData);
-      },
-      error: (error) => {
-        console.error('Error al cargar los datos principales del dashboard:', error);
-        alert('No se pudieron cargar los datos principales del dashboard. Revisa la consola para más detalles.');
-      }
-    });
+    // This method is now handled by forkJoin in ngOnInit
   }
 
   loadEstadoCounts(): void {
-    console.log('Cargando conteo por estado...');
-    this.estadoCountsSubscription = this.dashboardService.getCountByEstadoConPorcentaje().subscribe({
-      next: (data: EstadoCount[]) => {
-        this.estadoCounts = data;
-        console.log('Conteo por estado cargado:', this.estadoCounts);
-        this.prepareChartData();
-      },
-      error: (error) => {
-        console.error('Error al cargar el conteo por estado:', error);
-        alert('No se pudo cargar el conteo de recursos por estado. Revisa la consola para más detalles.');
-      }
-    });
+    // This method is now handled by forkJoin in ngOnInit
   }
 
   loadLoansDue(): void {
-    console.log('Cargando préstamos por vencer...');
-    this.loansDueSubscription = this.dashboardService.getLoansDue().subscribe({
-      next: (data: LoanDue[]) => {
-        this.loansDue = data; // Asegúrate de asignar los datos aquí
-        console.log('Préstamos por vencer cargados:', this.loansDue);
-      },
-      error: (error) => {
-        console.error('Error al cargar los préstamos por vencer:', error);
-        alert('No se pudieron cargar los préstamos por vencer. Revisa la consola para más detalles.');
-      }
-    });
+    // This method is now handled by forkJoin in ngOnInit
   }
 
   private prepareChartData(): void {
@@ -201,7 +196,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // Dividir la cadena 'YYYY-MM-DD' en sus componentes
     const parts = dateString.split('-'); // Ejemplo: "2025-06-29" -> ["2025", "06", "29"]
     const year = parseInt(parts[0]);
-    
+
     const month = parseInt(parts[1]) - 1;
     const day = parseInt(parts[2]);
 

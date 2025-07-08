@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CrearPrestamoComponent } from '../crear-prestamo/crear-prestamo.component';
-import { PrestamosService, Loan, Resource } from '../../services/prestamos.service'; // Importa PrestamosService e interfaces
+import { PrestamosService, Loan } from '../../services/prestamos.service'; 
 import { FormsModule } from '@angular/forms'; // Importa FormsModule para ngModel
 
 declare var bootstrap: any;
@@ -19,6 +19,7 @@ export class PrestamosComponent implements OnInit {
   filteredLoans: Loan[] = []; // Propiedad para almacenar los préstamos filtrados
   searchText: string = ''; // Propiedad para el texto de búsqueda del input
   selectedStatus: string = 'Filtrar por estado...'; // Propiedad para el estado seleccionado en el select
+  isLoadingTable: boolean = false;
 
   @ViewChild(CrearPrestamoComponent) crearPrestamoComponent!: CrearPrestamoComponent;
 
@@ -33,14 +34,17 @@ export class PrestamosComponent implements OnInit {
   }
 
   getLoans(): void {
+    this.isLoadingTable = true;
     this.prestamosService.getLoans().subscribe( // Usa el método del servicio
       (data) => {
         this.loans = data; // Asigna los datos obtenidos a la propiedad loans
         this.applyFilters(); // Aplica los filtros una vez que los datos se han cargado
         console.log('Préstamos obtenidos:', this.loans); 
+         this.isLoadingTable = false;
       },
       (error) => {
         console.error('Error al obtener préstamos:', error);
+         this.isLoadingTable = false;
       }
     );
   }
