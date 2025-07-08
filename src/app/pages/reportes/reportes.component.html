@@ -135,7 +135,7 @@
               </ng-container>
               <ng-container *ngIf="isLoanReport(currentReportTitle)">
                 <tr *ngFor="let loan of reportData">
-                  <td>{{ loan.recurso?.modelo || 'N/A' }} ({{ loan.recurso?.numeroSerie || 'N/A' }})</td>
+                  <td>{{ loan.resource?.modelo || 'N/A' }} ({{ loan.resource?.numeroSerie || 'N/A' }})</td>
                   <td>{{ loan.solicitante }}</td>
                   <td>{{ formatDate(loan.fechaPrestamo) }}</td>
                   <td>{{ formatDate(loan.fechaDevolucion) }}</td>
