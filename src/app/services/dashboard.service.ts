@@ -43,7 +43,7 @@ export interface LoanDue {
   providedIn: 'root'
 })
 export class DashboardService {
-  private apiUrl = 'http://52.54.77.191:8085/bff/dashboard'; // URL base de tu API
+  private apiUrl = 'https://f21t3uora4.execute-api.us-east-1.amazonaws.com'; 
 
   constructor(private http: HttpClient) { }
 
@@ -51,18 +51,18 @@ export class DashboardService {
    * Obtiene los datos principales del dashboard.
    */
   getDashboardData(): Observable<DashboardData> {
-    return this.http.get<DashboardData>(`${this.apiUrl}/findAll`);
+    return this.http.get<DashboardData>(`${this.apiUrl}/dashboard/findAll`);
   }
 
   /**
    * Obtiene el conteo de recursos por estado con porcentaje.
    */
   getCountByEstadoConPorcentaje(): Observable<EstadoCount[]> {
-    return this.http.get<EstadoCount[]>(`${this.apiUrl}/countByEstadoConPorcentaje`);
+    return this.http.get<EstadoCount[]>(`${this.apiUrl}/dashboard/countByEstadoConPorcentaje`);
   }
 
   // NUEVO MÉTODO para obtener los préstamos por vencer
   getLoansDue(): Observable<LoanDue[]> {
-    return this.http.get<LoanDue[]>(`${this.apiUrl}/findLoanDue`);
+    return this.http.get<LoanDue[]>(`${this.apiUrl}/dashboard/findLoanDue`);
   }
 }

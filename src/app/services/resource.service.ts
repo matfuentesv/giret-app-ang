@@ -30,7 +30,7 @@ export interface Documento {
   providedIn: 'root'
 })
 export class ResourceService {
-  private baseUrl = 'http://52.54.77.191:8085/bff'; // URL base para los recursos
+  private baseUrl = 'https://f21t3uora4.execute-api.us-east-1.amazonaws.com'; 
   
 
   constructor(private http: HttpClient) { }

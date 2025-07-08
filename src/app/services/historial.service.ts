@@ -16,7 +16,7 @@ export interface HistorialResource {
 })
 export class HistorialService {
   // Asegúrate de que esta URL base apunte a tu endpoint de historial
-  private historicalResourceUrl = 'http://52.54.77.191:8085/bff/historical-resource';
+  private historicalResourceUrl = 'https://f21t3uora4.execute-api.us-east-1.amazonaws.com';
 
   constructor(private http: HttpClient) { }
 
@@ -26,6 +26,6 @@ export class HistorialService {
    * @returns Un Observable con un array de objetos HistoricalResource.
    */
   getHistoricalByResourceId(id: number): Observable<HistorialResource[]> {
-    return this.http.get<HistorialResource[]>(`${this.historicalResourceUrl}/findById/${id}`);
+    return this.http.get<HistorialResource[]>(`${this.historicalResourceUrl}/historical-resource/findById/${id}`);
   }
 }

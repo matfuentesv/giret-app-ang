@@ -29,7 +29,7 @@ export interface Loan {
   providedIn: 'root'
 })
 export class PrestamosService {
-  private baseUrl = 'http://52.54.77.191:8085/bff/loan'; // URL base para los préstamos
+  private baseUrl = 'https://f21t3uora4.execute-api.us-east-1.amazonaws.com'; // URL base para los préstamos
 
   constructor(private http: HttpClient) { }
 
@@ -38,7 +38,7 @@ export class PrestamosService {
    * @returns Un Observable con un array de objetos Loan.
    */
   getLoans(): Observable<Loan[]> {
-    return this.http.get<Loan[]>(`${this.baseUrl}/findAll`);
+    return this.http.get<Loan[]>(`${this.baseUrl}/loan/findAll`);
   }
 
   /**
@@ -47,7 +47,7 @@ export class PrestamosService {
    * @returns Un Observable con el préstamo guardado (que podría incluir el ID generado).
    */
   saveLoan(loan: Loan): Observable<Loan> {
-    return this.http.post<Loan>(`${this.baseUrl}/saveLoan`, loan);
+    return this.http.post<Loan>(`${this.baseUrl}/loan/saveLoan`, loan);
   }
 
   updateLoanState(loanId: number, recursoId: number, newState: string): Observable<boolean> {
@@ -56,6 +56,6 @@ export class PrestamosService {
       recursoId: recursoId 
     };
     // La URL sigue incluyendo {state} e {id} como path variables
-    return this.http.put<boolean>(`${this.baseUrl}/updateLoanByState`, body);
+    return this.http.put<boolean>(`${this.baseUrl}/loan/updateLoanByState`, body);
   }
 }
