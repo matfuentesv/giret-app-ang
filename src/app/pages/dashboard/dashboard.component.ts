@@ -1,7 +1,6 @@
 // src/app/pages/dashboard/dashboard.component.ts
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
 import { CognitoService } from '../../auth/cognito.service';
 import { Subscription } from 'rxjs';
 import { DashboardService, DashboardData, EstadoCount, LoanDue } from '../../services/dashboard.service';
@@ -16,7 +15,6 @@ import { Chart, ChartOptions, ChartData, ArcElement, Tooltip, Legend, PieControl
   standalone: true,
   imports: [
     CommonModule,
-    HttpClientModule,
     BaseChartDirective
   ],
   templateUrl: './dashboard.component.html',
@@ -203,13 +201,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // Dividir la cadena 'YYYY-MM-DD' en sus componentes
     const parts = dateString.split('-'); // Ejemplo: "2025-06-29" -> ["2025", "06", "29"]
     const year = parseInt(parts[0]);
-    // Los meses en JavaScript (y TypeScript) son base 0 (enero es 0, junio es 5, etc.)
+    
     const month = parseInt(parts[1]) - 1;
     const day = parseInt(parts[2]);
 
-    // Crear un objeto Date utilizando los componentes numéricos (año, mes, día)
-    // Esto asegura que la fecha se interprete en la zona horaria local del navegador,
-    // previniendo el problema de que se reste un día.
     const date = new Date(year, month, day);
 
     // Formatear la fecha a 'DD/MM/YYYY'
