@@ -293,15 +293,13 @@ export class ReportesComponent implements OnInit {
     let csv = '';
     const headers: string[] = [];
 
-    // Definir encabezados basados en el tipo de reporte
     if (this.isResourceReport(this.currentReportTitle)) {
       csv += 'ID,Modelo,No. Serie,Categoría,Estado,Email Usuario,Fecha Garantía\n';
       headers.push('idRecurso', 'modelo', 'numeroSerie', 'categoria', 'estado', 'emailUsuario', 'fechaVencimientoGarantia');
     } else if (this.isLoanReport(this.currentReportTitle)) {
       csv += 'Recurso,Solicitante,Fecha Préstamo,Fecha Devolución,Estado\n';
-      headers.push('recurso', 'solicitante', 'fechaPrestamo', 'fechaDevolucion', 'estado');
+      headers.push('resource', 'solicitante', 'fechaPrestamo', 'fechaDevolucion', 'estado');
     } else {
-      // Si no es un tipo de reporte conocido, intenta generar encabezados genéricos
       const firstItem = this.reportData[0];
       for (const key in firstItem) {
         if (Object.prototype.hasOwnProperty.call(firstItem, key)) {
@@ -316,17 +314,21 @@ export class ReportesComponent implements OnInit {
     this.reportData.forEach(item => {
       const row: string[] = [];
       headers.forEach(header => {
-        if (header === 'recurso') { // Manejo especial para el recurso en préstamos
-          const resourceInfo = item.recurso ? `${item.recurso.modelo} (N° Serie: ${item.recurso.numeroSerie})` : 'N/A';
+        let value = item[header]; // Obtener el valor crudo
+
+        
+        if (header === 'resource') { 
+          const resourceInfo = value ? `${value.modelo} (N° Serie: ${value.numeroSerie})` : 'N/A';
           row.push(`"${resourceInfo}"`);
         } else if (header === 'fechaPrestamo' || header === 'fechaDevolucion' || header === 'fechaVencimientoGarantia') {
-          row.push(`"${this.formatDate(item[header])}"`);
+          row.push(`"${this.formatDate(value || '')}"`);
         } else if (header === 'estado') {
-            row.push(`"${this.getTitleCase(item[header])}"`);
-        } else if (item[header] !== undefined && item[header] !== null) {
-          row.push(`"${String(item[header]).replace(/"/g, '""')}"`); // Escapar comillas dobles
+          
+          row.push(`"${this.getTitleCase(value || '')}"`);
         } else {
-          row.push('');
+          
+          const stringValue = (value === undefined || value === null) ? '' : String(value);
+          row.push(`"${stringValue.replace(/"/g, '""')}"`); 
         }
       });
       csv += row.join(',') + '\n';
@@ -334,7 +336,6 @@ export class ReportesComponent implements OnInit {
 
     return csv;
   }
-
   /**
    * Descarga el reporte actual como un archivo CSV.
    */

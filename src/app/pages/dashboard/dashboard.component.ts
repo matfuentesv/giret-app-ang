@@ -2,7 +2,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CognitoService } from '../../auth/cognito.service';
-import { Subscription, forkJoin } from 'rxjs'; // Import forkJoin
+import { Subscription, finalize, forkJoin } from 'rxjs'; // Import forkJoin
 import { DashboardService, DashboardData, EstadoCount, LoanDue } from '../../services/dashboard.service';
 
 // Importaciones específicas para ng2-charts
@@ -96,12 +96,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     );
 
-    // Use forkJoin to manage multiple observable subscriptions and set isLoading to false when all are complete
+
     forkJoin([
       this.dashboardService.getDashboardData(),
       this.dashboardService.getCountByEstadoConPorcentaje(),
       this.dashboardService.getLoansDue()
-    ]).subscribe({
+      ]).pipe(
+      finalize(() => this.isLoading = false)
+    ).subscribe({
       next: ([dashboardData, estadoCounts, loansDue]) => {
         this.dashboardData = dashboardData;
         this.estadoCounts = estadoCounts;
@@ -111,11 +113,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error al cargar uno o más datos del dashboard:', error);
-        alert('Ocurrió un error al cargar algunos datos del dashboard. Revisa la consola para más detalles.');
+        window.alert('Ocurrió un error al cargar algunos datos del dashboard. Revisa la consola para más detalles.');
+        this.isLoading = false;
       },
-      complete: () => {
-        this.isLoading = false; // Set to false when all observables complete (success or error)
-      }
     });
   }
 
