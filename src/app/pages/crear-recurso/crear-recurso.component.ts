@@ -120,6 +120,7 @@ export class CrearRecursoComponent implements OnInit{
     if (this.recursoForm) {
       this.recursoForm.resetForm(this.newRecurso);
     }
+     this.isLoading = false;
   }
     
   ngOnInit(): void {

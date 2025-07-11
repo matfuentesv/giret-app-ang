@@ -56,10 +56,11 @@ export class PrestamosComponent implements OnInit {
     let tempLoans = this.loans;
 
     // Filtro por texto de búsqueda (modelo del recurso o solicitante)
-    if (this.searchText) {
+    if (this.searchText && this.searchText.trim() !== '') { 
+      const lowerCaseSearchText = this.searchText.toLowerCase().trim(); // Asegurarse de trim() también aquí
       tempLoans = tempLoans.filter(loan =>
-        (loan.resource?.modelo?.toLowerCase().includes(this.searchText.toLowerCase()) ||
-         loan.solicitante.toLowerCase().includes(this.searchText.toLowerCase()))
+        (loan.resource?.modelo?.toLowerCase().includes(lowerCaseSearchText) ||
+         loan.solicitante.toLowerCase().includes(lowerCaseSearchText))
       );
     }
 
@@ -104,10 +105,12 @@ export class PrestamosComponent implements OnInit {
   closeCrearPrestamoModal(): void {
     const modalElement = document.getElementById('crearPrestamoModal');
     if (modalElement) {
-      const modal = bootstrap.Modal.getInstance(modalElement);
-      if (modal) {
-        modal.hide();
+      let modal = bootstrap.Modal.getInstance(modalElement); // Intenta obtener una instancia existente
+      if (!modal) { // Si no hay una instancia existente, crea una nueva
+        modal = new bootstrap.Modal(modalElement);
       }
+      modal.hide(); // Ahora, 'modal' siempre será una instancia válida para llamar a hide()
+      
       // Asegurarse de que el backdrop se elimine si Bootstrap no lo hace automáticamente
       const body = document.body;
       if (body.classList.contains('modal-open')) {

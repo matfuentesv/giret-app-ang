@@ -61,7 +61,7 @@ export class DashboardService {
     return this.http.get<EstadoCount[]>(`${this.apiUrl}/dashboard/countByEstadoConPorcentaje`);
   }
 
-  // NUEVO MÉTODO para obtener los préstamos por vencer
+  // para obtener los préstamos por vencer
   getLoansDue(): Observable<LoanDue[]> {
     return this.http.get<LoanDue[]>(`${this.apiUrl}/dashboard/findLoanDue`);
   }
