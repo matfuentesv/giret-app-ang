@@ -1,10 +1,15 @@
-// reportes.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PrestamosService, Loan } from '../../services/prestamos.service';
 import { ResourceService, Recurso } from '../../services/resource.service';
 import { Observable, forkJoin } from 'rxjs';
 
+/**
+ * @fileoverview Este componente `ReportesComponent` permite a los usuarios generar
+ * diversos reportes sobre el inventario de recursos y los préstamos.
+ * Proporciona funcionalidades para cargar datos filtrados por diferentes criterios
+ * y exportar estos reportes a formato CSV.
+ */
 @Component({
   selector: 'app-reportes',
   standalone: true,
@@ -14,21 +19,51 @@ import { Observable, forkJoin } from 'rxjs';
 })
 export class ReportesComponent implements OnInit {
 
+  /**
+   * @description Almacena los datos del reporte actual que se va a mostrar en la tabla.
+   * Su estructura varía dependiendo del tipo de reporte (recursos o préstamos).
+   * @type {any[]}
+   */
   reportData: any[] = [];
+
+  /**
+   * @description Almacena el título del reporte que se está visualizando actualmente.
+   * Se utiliza para la cabecera de la tabla y el nombre del archivo CSV.
+   * @type {string}
+   */
   currentReportTitle: string = '';
+
+  /**
+   * @description Bandera que indica si un reporte está siendo cargado o generado.
+   * Utilizada para mostrar un indicador de carga en la interfaz de usuario.
+   * @type {boolean}
+   */
   isLoading: boolean = false;
 
+  /**
+   * @description Constructor del componente ReportesComponent.
+   * Inyecta los servicios necesarios para obtener datos de préstamos y recursos.
+   * @param {PrestamosService} prestamosService - Servicio para obtener datos de préstamos.
+   * @param {ResourceService} resourceService - Servicio para obtener datos de recursos.
+   */
   constructor(
     private prestamosService: PrestamosService,
     private resourceService: ResourceService
   ) { }
 
+  /**
+   * @description Hook del ciclo de vida de Angular que se ejecuta después de que el componente
+   * haya sido inicializado.
+   * @returns {void}
+   */
   ngOnInit(): void {
-    // Puedes cargar un reporte por defecto al inicio si lo deseas
+    
   }
 
   /**
-   * Genera el reporte de Inventario General de Recursos.
+   * @description Genera el reporte de Inventario General de Recursos.
+   * Obtiene todos los recursos y los asigna a `reportData`.
+   * @returns {void}
    */
   generateInventoryReport(): void {
     this.isLoading = true;
@@ -48,7 +83,9 @@ export class ReportesComponent implements OnInit {
   }
 
   /**
-   * Genera el reporte de Recursos en Bodega.
+   * @description Genera el reporte de Recursos en Bodega.
+   * Obtiene todos los recursos y filtra aquellos con estado 'Bodega'.
+   * @returns {void}
    */
   generateBodegaResourcesReport(): void {
     this.isLoading = true;
@@ -68,7 +105,9 @@ export class ReportesComponent implements OnInit {
   }
 
   /**
-   * Genera el reporte de Recursos Asignados.
+   * @description Genera el reporte de Recursos Asignados.
+   * Obtiene todos los recursos y filtra aquellos con estado 'asignado'.
+   * @returns {void}
    */
   generateAssignedResourcesReport(): void {
     this.isLoading = true;
@@ -88,7 +127,9 @@ export class ReportesComponent implements OnInit {
   }
 
   /**
-   * Genera el reporte de Recursos en Mantenimiento.
+   * @description Genera el reporte de Recursos en Mantenimiento.
+   * Obtiene todos los recursos y filtra aquellos con estado 'mantenimiento'.
+   * @returns {void}
    */
   generateMantenimientoResourcesReport(): void {
     this.isLoading = true;
@@ -108,7 +149,9 @@ export class ReportesComponent implements OnInit {
   }
 
   /**
-   * Genera el reporte de Préstamos Activos.
+   * @description Genera el reporte de Préstamos Activos.
+   * Obtiene todos los préstamos y filtra aquellos con estado 'activo'.
+   * @returns {void}
    */
   generateActiveLoansReport(): void {
     this.isLoading = true;
@@ -129,14 +172,14 @@ export class ReportesComponent implements OnInit {
 
 
   /**
-   * Genera el reporte de Préstamos Atrasados.
+   * @description Genera el reporte de Préstamos Atrasados.
+   * Obtiene todos los préstamos y filtra aquellos con estado 'atrasado'.
+   * @returns {void}
    */
    generateOverdueLoansReport(): void {
     this.isLoading = true;
     this.prestamosService.getLoans().subscribe({
       next: (data: Loan[]) => {
-        // Modificación clave: Filtrar directamente por el estado 'atrasado'
-        // Se usa toLowerCase() para asegurar que la comparación no sea sensible a mayúsculas y minúsculas.
         this.reportData = data.filter(loan => loan.estado.toLowerCase() === 'atrasado');
         this.currentReportTitle = 'Préstamos Atrasados';
         this.isLoading = false;
@@ -151,7 +194,9 @@ export class ReportesComponent implements OnInit {
   }
 
   /**
-   * Genera el reporte de Préstamos Devueltos.
+   * @description Genera el reporte de Préstamos Devueltos.
+   * Obtiene todos los préstamos y filtra aquellos con estado 'devuelto'.
+   * @returns {void}
    */
   generateReturnedLoansReport(): void {
     this.isLoading = true;
@@ -171,7 +216,9 @@ export class ReportesComponent implements OnInit {
   }
 
   /**
-   * Genera el reporte de Recursos de Computación.
+   * @description Genera el reporte de Recursos de Computación.
+   * Obtiene todos los recursos y filtra aquellos con categoría 'Computacion'.
+   * @returns {void}
    */
   generateComputacionResourcesReport(): void {
     this.isLoading = true;
@@ -191,7 +238,10 @@ export class ReportesComponent implements OnInit {
   }
 
   /**
-   * Genera el reporte de Recursos con Garantía Vencida.
+   * @description Genera el reporte de Recursos con Garantía Vencida.
+   * Obtiene todos los recursos y filtra aquellos cuya `fechaVencimientoGarantia`
+   * es anterior a la fecha actual.
+   * @returns {void}
    */
   generateExpiredWarrantyResourcesReport(): void {
     this.isLoading = true;
@@ -214,9 +264,9 @@ export class ReportesComponent implements OnInit {
   }
 
   /**
-   * Determina si el reporte actual es de tipo Recurso para mostrar las columnas correctas.
-   * @param title El título del reporte actual.
-   * @returns true si es un reporte de Recurso, false en caso contrario.
+   * @description Determina si el reporte actual es de tipo Recurso para mostrar las columnas correctas.
+   * @param {string} title - El título del reporte actual.
+   * @returns {boolean} `true` si es un reporte de Recurso, `false` en caso contrario.
    */
   isResourceReport(title: string): boolean {
     return [
@@ -230,9 +280,9 @@ export class ReportesComponent implements OnInit {
   }
 
   /**
-   * Determina si el reporte actual es de tipo Préstamo para mostrar las columnas correctas.
-   * @param title El título del reporte actual.
-   * @returns true si es un reporte de Préstamo, false en caso contrario.
+   * @description Determina si el reporte actual es de tipo Préstamo para mostrar las columnas correctas.
+   * @param {string} title - El título del reporte actual.
+   * @returns {boolean} `true` si es un reporte de Préstamo, `false` en caso contrario.
    */
   isLoanReport(title: string): boolean {
     return [
@@ -242,8 +292,11 @@ export class ReportesComponent implements OnInit {
     ].includes(title);
   }
 
-  // --- Funciones de utilidad para formateo ---
-
+  /**
+   * @description Formatea una cadena de fecha de 'YYYY-MM-DD' a 'DD/MM/YYYY'.
+   * @param {string} dateString - La cadena de fecha a formatear.
+   * @returns {string} La fecha formateada o la cadena original si el formato no es el esperado.
+   */
   formatDate(dateString: string): string {
     if (!dateString) return '';
     const parts = dateString.split('-');
@@ -253,6 +306,12 @@ export class ReportesComponent implements OnInit {
     return dateString;
   }
 
+  /**
+   * @description Devuelve la clase CSS de Bootstrap adecuada para el badge de estado
+   * de un recurso o préstamo, basándose en el estado proporcionado.
+   * @param {string} estado - El estado del recurso o préstamo.
+   * @returns {string} La clase CSS de Bootstrap para el badge.
+   */
   getBadgeClass(estado: string): string {
     switch (estado.toLowerCase()) {
       case 'atrasado':
@@ -274,16 +333,20 @@ export class ReportesComponent implements OnInit {
     }
   }
 
+  /**
+   * @description Convierte una cadena de texto a formato "Title Case" (primera letra en mayúscula, el resto en minúscula).
+   * @param {string} text - La cadena de texto a convertir.
+   * @returns {string} La cadena de texto en formato "Title Case".
+   */
   getTitleCase(text: string): string {
     if (!text) return '';
     return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
   }
 
-  // --- Funciones para la descarga de reportes (ya implementadas) ---
-
   /**
-   * Genera el contenido del reporte actual en formato CSV.
-   * @returns El contenido CSV como una cadena de texto.
+   * @description Genera el contenido del reporte actual en formato CSV.
+   * Incluye las cabeceras y los datos del reporte, formateando fechas y nombres de recursos según el tipo de reporte.
+   * @returns {string} El contenido del reporte en formato CSV.
    */
   generateCsvContent(): string {
     if (!this.reportData || this.reportData.length === 0) {
@@ -307,16 +370,14 @@ export class ReportesComponent implements OnInit {
           headers.push(key);
         }
       }
-      csv = csv.slice(0, -1) + '\n'; // Eliminar la última coma y añadir salto de línea
+      csv = csv.slice(0, -1) + '\n'; 
     }
 
     // Añadir filas de datos
     this.reportData.forEach(item => {
       const row: string[] = [];
       headers.forEach(header => {
-        let value = item[header]; // Obtener el valor crudo
-
-        
+        let value = item[header]; 
         if (header === 'resource') { 
           const resourceInfo = value ? `${value.modelo} (N° Serie: ${value.numeroSerie})` : 'N/A';
           row.push(`"${resourceInfo}"`);
@@ -336,8 +397,11 @@ export class ReportesComponent implements OnInit {
 
     return csv;
   }
+
   /**
-   * Descarga el reporte actual como un archivo CSV.
+   * @description Descarga el reporte actual como un archivo CSV.
+   * Genera el contenido CSV, crea un Blob y un enlace de descarga para el usuario.
+   * @returns {void}
    */
   downloadReport(): void {
     if (this.reportData.length === 0) {
@@ -358,19 +422,20 @@ export class ReportesComponent implements OnInit {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(url); // Clean up the URL object
+      URL.revokeObjectURL(url); 
     } else {
-      // Fallback for older browsers (not typically needed in modern Angular apps)
       window.open('data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent));
     }
   }
 
   /**
-   * Limpia los datos del reporte y el título actual.
+   * @description Limpia los datos del reporte y el título actual, restableciendo el componente a su estado inicial.
+   * También desactiva el indicador de carga.
+   * @returns {void}
    */
   clearReport(): void {
     this.reportData = [];
     this.currentReportTitle = '';
-    this.isLoading = false; // Asegurarse de que el estado de carga también se resetee
+    this.isLoading = false; 
   }
 }

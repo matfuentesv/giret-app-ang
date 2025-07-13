@@ -2,7 +2,24 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+/**
+ * @fileoverview Este archivo define las interfaces de datos para los recursos y documentos,
+ * y el servicio `ResourceService` que interactúa con una API para gestionar
+ * las operaciones relacionadas con los recursos y sus documentos asociados.
+ */
 
+/**
+ * @description Interfaz que define la estructura de un Recurso.
+ * @property {number} [idRecurso] - El ID único del recurso (opcional, ya que puede ser generado por el backend).
+ * @property {string} modelo - El modelo del recurso.
+ * @property {string} descripcion - Una descripción detallada del recurso.
+ * @property {string} numeroSerie - El número de serie único del recurso.
+ * @property {string} fechaCompra - La fecha de compra del recurso en formato de cadena (YYYY-MM-DD).
+ * @property {string} fechaVencimientoGarantia - La fecha de vencimiento de la garantía en formato de cadena (YYYY-MM-DD).
+ * @property {string} estado - El estado actual del recurso (ej. 'En Bodega', 'Prestado', 'Asignado', 'Mantenimiento', 'Eliminado').
+ * @property {string} emailUsuario - El email del usuario asociado al recurso.
+ * @property {string} categoria - La categoría a la que pertenece el recurso (ej. 'Computacion', 'Mobiliario').
+ */
 export interface Recurso {
   idRecurso?: number;
   modelo: string;
@@ -15,7 +32,16 @@ export interface Recurso {
   categoria: string;
 }
 
-
+/**
+ * @description Interfaz que define la estructura de un Documento asociado a un recurso.
+ * @property {number} [id] - El ID único del documento (opcional).
+ * @property {string} key - La clave de almacenamiento del documento (ej. en un servicio de almacenamiento de objetos).
+ * @property {string} nombreArchivo - El nombre original del archivo.
+ * @property {string} url - La URL para acceder al documento.
+ * @property {string} tipoMime - El tipo MIME del archivo (ej. 'application/pdf', 'image/jpeg').
+ * @property {string} fechaCarga - La fecha en que el documento fue cargado en formato de cadena.
+ * @property {number} [recursoId] - El ID del recurso al que está asociado este documento (opcional).
+ */
 export interface Documento {
   id?: number;
   key: string;
@@ -26,13 +52,33 @@ export interface Documento {
   recursoId?: number;
 }
 
+/**
+ * @description Servicio `ResourceService` para interactuar con la API de backend
+ * y gestionar las operaciones relacionadas con los recursos y sus documentos.
+ * @injectable
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class ResourceService {
-  private baseUrl = 'https://f21t3uora4.execute-api.us-east-1.amazonaws.com'; 
-  
 
+  /**
+   * @description Método placeholder para obtener el historial de un recurso por su ID.
+   * Actualmente no implementado y lanza un error.
+   * @param {number} recursoId - El ID del recurso cuyo historial se desea obtener.
+   * @returns {any}
+   * @throws {Error} Siempre lanza un error indicando que el método no está implementado.
+   */
+  getHistorialByResourceId(recursoId: number) {
+    throw new Error('Method not implemented.');
+  }
+  private baseUrl = 'http://52.54.77.191:8085/bff'; // URL base para los recursos
+  
+  /**
+   * @description Constructor del servicio ResourceService.
+   * Inyecta el `HttpClient` para realizar solicitudes HTTP al backend.
+   * @param {HttpClient} http - Cliente HTTP de Angular.
+   */
   constructor(private http: HttpClient) { }
 
   /**

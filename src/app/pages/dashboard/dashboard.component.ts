@@ -1,15 +1,17 @@
-// src/app/pages/dashboard/dashboard.component.ts
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CognitoService } from '../../auth/cognito.service';
-import { Subscription, finalize, forkJoin } from 'rxjs'; // Import forkJoin
+import { Subscription, finalize, forkJoin } from 'rxjs'; 
 import { DashboardService, DashboardData, EstadoCount, LoanDue } from '../../services/dashboard.service';
-
-// Importaciones específicas para ng2-charts
 import { BaseChartDirective } from 'ng2-charts';
 import { Chart, ChartOptions, ChartData, ArcElement, Tooltip, Legend, PieController } from 'chart.js';
 
-
+/**
+ * @fileoverview Este componente `DashboardComponent` muestra un panel de control
+ * con información relevante sobre los recursos y préstamos. Incluye un gráfico de pastel
+ * que visualiza la distribución de recursos por estado y una lista de préstamos próximos a vencer.
+ * También gestiona el estado de carga y la obtención de datos del usuario.
+ */
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -22,21 +24,68 @@ import { Chart, ChartOptions, ChartData, ArcElement, Tooltip, Legend, PieControl
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 
+  /**
+   * @description Almacena el email del usuario logueado, obtenido del `CognitoService`.
+   * @type {string | null}
+   */
   userEmail: string | null = null;
+
+  /**
+   * @description Suscripción a los atributos del usuario, utilizada para gestionar la desuscripción
+   * y evitar fugas de memoria.
+   * @type {Subscription | undefined}
+   */
   private userAttributesSubscription: Subscription | undefined;
 
+  /**
+   * @description Almacena los datos generales del dashboard, como el total de recursos y préstamos.
+   * @type {DashboardData | null}
+   */
   dashboardData: DashboardData | null = null;
+
+  /**
+   * @description Suscripción a los datos generales del dashboard.
+   * @type {Subscription | undefined}
+   */
   private dashboardDataSubscription: Subscription | undefined;
 
+  /**
+   * @description Almacena el conteo de recursos por cada estado, junto con su porcentaje.
+   * Utilizado para poblar el gráfico de pastel.
+   * @type {EstadoCount[]}
+   */
   estadoCounts: EstadoCount[] = [];
+
+  /**
+   * @description Suscripción a los conteos de recursos por estado.
+   * @type {Subscription | undefined}
+   */
   private estadoCountsSubscription: Subscription | undefined;
 
+  /**
+   * @description Almacena la lista de préstamos próximos a vencer.
+   * @type {LoanDue[]}
+   */
   loansDue: LoanDue[] = [];
+
+  /**
+   * @description Suscripción a la lista de préstamos próximos a vencer.
+   * @type {Subscription | undefined}
+   */
   private loansDueSubscription: Subscription | undefined;
 
-  isLoading: boolean = true; // Initialize to true
+  /**
+   * @description Bandera que indica si los datos del dashboard están siendo cargados.
+   * Utilizada para mostrar un indicador de carga en la interfaz de usuario.
+   * @type {boolean}
+   */
+  isLoading: boolean = true; 
 
-  // --- Propiedades para el gráfico de pastel (Chart.js con ng2-charts) ---
+  /**
+   * @description Configuración de los datos para el gráfico de pastel.
+   * Incluye etiquetas (estados), valores (cantidades) y estilos de color.
+   * @type {ChartData<'pie', number[], string>}
+   */
   public pieChartData: ChartData<'pie', number[], string> = {
     labels: [],
     datasets: [{
@@ -47,6 +96,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }]
   };
 
+  /**
+   * @description Opciones de configuración para el gráfico de pastel.
+   * Define la responsividad, posición de la leyenda y callbacks para tooltips.
+   * @type {ChartOptions<'pie'>}
+   */
   public pieChartOptions: ChartOptions<'pie'> = {
     responsive: true,
     plugins: {
@@ -64,10 +118,24 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   };
 
+  /**
+   * @description Tipo de gráfico, en este caso 'pie' (pastel).
+   * @type {'pie'}
+   */
   public pieChartType: 'pie' = 'pie';
+
+  /**
+   * @description Indica si la leyenda del gráfico de pastel debe ser visible.
+   * @type {boolean}
+   */
   public pieChartLegend = true;
 
-  // Define un mapeo de estados a colores
+  /**
+   * @description Mapa de colores para los diferentes estados de los recursos en el gráfico de pastel.
+   * Asocia cada estado con un color de fondo y un color de borde.
+   * @private
+   * @type {{ [key: string]: { backgroundColor: string, borderColor: string } }}
+   */
   private estadoColorMap: { [key: string]: { backgroundColor: string, borderColor: string } } = {
     'eliminado': { backgroundColor: 'rgba(220, 53, 69, 0.7)', borderColor: 'rgba(220, 53, 69, 1)' },
     'asignado': { backgroundColor: 'rgba(40, 167, 69, 0.7)', borderColor: 'rgba(40, 167, 69, 1)' },
@@ -76,7 +144,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     'bodega': { backgroundColor: 'rgba(0, 123, 255, 0.7)', borderColor: 'rgba(0, 123, 255, 1)' },
   };
 
-
+  /**
+   * @description Constructor del componente DashboardComponent.
+   * Inyecta los servicios necesarios y registra los elementos de Chart.js.
+   * @param {CognitoService} cognitoService - Servicio para obtener información del usuario.
+   * @param {DashboardService} dashboardService - Servicio para obtener los datos del dashboard.
+   */
   constructor(
     private cognitoService: CognitoService,
     private dashboardService: DashboardService
@@ -84,8 +157,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
     Chart.register(PieController, ArcElement, Tooltip, Legend);
   }
 
+  /**
+   * @description Hook del ciclo de vida de Angular que se ejecuta después de que el componente
+   * haya sido inicializado.
+   * Inicia la carga de todos los datos del dashboard (atributos de usuario, datos generales,
+   * conteo por estado y préstamos próximos a vencer) de forma concurrente.
+   * Gestiona el estado de carga y maneja posibles errores durante la obtención de datos.
+   * @returns {void}
+   */
   ngOnInit(): void {
-    this.isLoading = true; // Set to true at the beginning of ngOnInit
+    this.isLoading = true; 
     this.userAttributesSubscription = this.cognitoService.getUserAttributes().subscribe(
       attributes => {
         this.userEmail = attributes ? attributes['email'] : null;
@@ -95,8 +176,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.userEmail = null;
       }
     );
-
-
     forkJoin([
       this.dashboardService.getDashboardData(),
       this.dashboardService.getCountByEstadoConPorcentaje(),
@@ -119,13 +198,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * @description Hook del ciclo de vida de Angular que se ejecuta justo antes de que el componente
+   * sea destruido.
+   * Desuscribe todas las suscripciones para evitar fugas de memoria.
+   * @returns {void}
+   */
   ngOnDestroy(): void {
     if (this.userAttributesSubscription) {
       this.userAttributesSubscription.unsubscribe();
     }
-    // Subscriptions created with forkJoin are typically managed by forkJoin itself,
-    // but if you have other individual subscriptions, keep their unsubscriptions.
-    if (this.dashboardDataSubscription) { // These might not be needed if using forkJoin exclusively for data loading
+    if (this.dashboardDataSubscription) { 
       this.dashboardDataSubscription.unsubscribe();
     }
     if (this.estadoCountsSubscription) {
@@ -136,21 +219,41 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  // loadDashboardData, loadEstadoCounts, loadLoansDue methods can be removed
-  // or adapted if you still want to load them individually for other reasons,
-  // but for the loading spinner, forkJoin is more efficient.
+  /**
+   * @description Método auxiliar para cargar los datos generales del dashboard.
+   * Actualmente, la lógica de carga principal se encuentra en `ngOnInit` usando `forkJoin`.
+   * Este método podría ser extendido si se necesitara una recarga específica de solo estos datos.
+   * @returns {void}
+   */
   loadDashboardData(): void {
-    // This method is now handled by forkJoin in ngOnInit
   }
 
+  /**
+   * @description Método auxiliar para cargar el conteo de recursos por estado.
+   * Actualmente, la lógica de carga principal se encuentra en `ngOnInit` usando `forkJoin`.
+   * Este método podría ser extendido si se necesitara una recarga específica de solo estos datos.
+   * @returns {void}
+   */
   loadEstadoCounts(): void {
-    // This method is now handled by forkJoin in ngOnInit
   }
 
+  /**
+   * @description Método auxiliar para cargar los préstamos próximos a vencer.
+   * Actualmente, la lógica de carga principal se encuentra en `ngOnInit` usando `forkJoin`.
+   * Este método podría ser extendido si se necesitara una recarga específica de solo estos datos.
+   * @returns {void}
+   */
   loadLoansDue(): void {
-    // This method is now handled by forkJoin in ngOnInit
   }
 
+  /**
+   * @description Prepara los datos para el gráfico de pastel (`pieChartData`)
+   * basándose en la propiedad `estadoCounts`.
+   * Asigna las etiquetas, los valores y los colores correspondientes a cada estado.
+   * Si no hay datos de estado, el gráfico se inicializa vacío.
+   * @private
+   * @returns {void}
+   */
   private prepareChartData(): void {
     if (this.estadoCounts && this.estadoCounts.length > 0) {
       this.pieChartData.labels = this.estadoCounts.map(item => item.estado.charAt(0).toUpperCase() + item.estado.slice(1));
@@ -190,11 +293,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * @description Formatea una cadena de fecha de 'YYYY-MM-DD' a 'DD/MM/YYYY'.
+   * @param {string} dateString - La cadena de fecha a formatear.
+   * @returns {string} La fecha formateada o una cadena vacía si la entrada es nula o vacía.
+   */
   formatDate(dateString: string): string {
     if (!dateString) return '';
 
-    // Dividir la cadena 'YYYY-MM-DD' en sus componentes
-    const parts = dateString.split('-'); // Ejemplo: "2025-06-29" -> ["2025", "06", "29"]
+    const parts = dateString.split('-'); 
     const year = parseInt(parts[0]);
 
     const month = parseInt(parts[1]) - 1;
@@ -204,7 +311,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     // Formatear la fecha a 'DD/MM/YYYY'
     const formattedDay = date.getDate().toString().padStart(2, '0');
-    const formattedMonth = (date.getMonth() + 1).toString().padStart(2, '0'); // Volver a sumar 1 para el mes
+    const formattedMonth = (date.getMonth() + 1).toString().padStart(2, '0'); 
     const formattedYear = date.getFullYear();
 
     return `${formattedDay}/${formattedMonth}/${formattedYear}`;

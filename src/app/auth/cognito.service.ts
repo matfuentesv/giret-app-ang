@@ -1,9 +1,13 @@
-// src/app/services/cognito.service.ts (MODIFICADO)
 import { Injectable } from '@angular/core';
 import { OidcSecurityService, UserDataResult } from 'angular-auth-oidc-client';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
+/**
+ * @fileoverview Este servicio `CognitoService` interactúa con el `OidcSecurityService`
+ * de `angular-auth-oidc-client` para proporcionar acceso a los atributos del usuario autenticado.
+ * Está diseñado para abstraer la obtención de datos del usuario desde el flujo OIDC.
+ */
 @Injectable({
   providedIn: 'root'
 })

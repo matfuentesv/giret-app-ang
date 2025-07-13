@@ -4,6 +4,12 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { Recurso, ResourceService } from '../../services/resource.service';
 import { Loan, PrestamosService } from '../../services/prestamos.service';
 
+/**
+ * @fileoverview Este componente permite a los usuarios crear nuevos préstamos de recursos.
+ * Proporciona un formulario para seleccionar un recurso disponible, especificar las fechas
+ * de préstamo y devolución, e ingresar el nombre del solicitante.
+ * Realiza validaciones en tiempo real para las fechas y la selección del recurso.
+ */
 @Component({
   selector: 'app-crear-prestamo',
   imports: [CommonModule,FormsModule],
@@ -12,15 +18,45 @@ import { Loan, PrestamosService } from '../../services/prestamos.service';
 })
 export class CrearPrestamoComponent implements OnInit{
 
+/**
+   * @description Almacena la lista de recursos disponibles para ser prestados.
+   * Se cargan al inicializar el componente, excluyendo aquellos con estado 'prestado'.
+   * @type {Recurso[]}
+   */
   recursosDisponibles: Recurso[] = []; // Para almacenar la lista de recursos
 
+  /**
+   * @description Modela el texto ingresado por el usuario en el campo de búsqueda de recursos.
+   * Utilizado para filtrar sugerencias de recursos.
+   * @type {string}
+   */
   selectedRecursoText: string = ''; 
+
+  /**
+   * @description Bandera que indica si la selección del recurso es inválida (es decir,
+   * el usuario escribió algo pero no seleccionó un recurso de la lista de sugerencias).
+   * @type {boolean}
+   */
   isInvalidRecursoSelection: boolean = false;
 
+   /**
+   * @description Almacena la lista de recursos que coinciden con el texto de búsqueda del usuario,
+   * utilizada para mostrar sugerencias.
+   * @type {Recurso[]}
+   */
   filteredRecursos: Recurso[] = []; 
+
+  /**
+   * @description Bandera que controla la visibilidad de la lista de sugerencias de recursos.
+   * @type {boolean}
+   */
   showSuggestions: boolean = false;
   
-  // Objeto para el nuevo préstamo con valores iniciales
+  /**
+   * @description Objeto que representa el nuevo préstamo a crear. Contiene los datos del formulario.
+   * Se inicializa con valores por defecto.
+   * @type {Loan}
+   */
   newLoan: Loan = {
     recursoId: 0, // Se inicializará con el ID del recurso seleccionado
     fechaPrestamo: '',
@@ -29,25 +65,59 @@ export class CrearPrestamoComponent implements OnInit{
     estado: 'activo' // Estado por defecto para nuevos préstamos
   };
 
+  /**
+   * @description Emite un evento cuando un préstamo ha sido creado exitosamente.
+   * Permite que el componente padre reaccione a la creación de un préstamo (ej. recargar la lista).
+   * @type {EventEmitter<void>}
+   * @output loanCreated
+   */
   @Output() loanCreated = new EventEmitter<void>(); // Evento para notificar al padre que un préstamo fue creado
 
+  /**
+   * @description Bandera que indica si las fechas de préstamo y devolución son inválidas
+   * (es decir, la fecha de devolución es anterior a la fecha de préstamo).
+   * @type {boolean}
+   */
   fechasPrestamoInvalidas: boolean = false;
 
-   @ViewChild('loanForm') loanForm: NgForm | undefined;
+  /**
+   * @description Referencia al formulario NgForm en la plantilla, permite resetear el formulario.
+   * @type {NgForm | undefined}
+   */
+  @ViewChild('loanForm') loanForm: NgForm | undefined;
 
-   isLoading: boolean = false;
+  /**
+   * @description Bandera que indica si una operación de guardado de préstamo está en curso,
+   * útil para deshabilitar botones y prevenir envíos múltiples.
+   * @type {boolean}
+   */
+  isLoading: boolean = false;
 
+  /**
+   * @description Constructor del componente CrearPrestamoComponent.
+   * Inyecta los servicios necesarios para interactuar con los recursos y los préstamos.
+   * @param {ResourceService} resourceService - Servicio para obtener y gestionar recursos.
+   * @param {PrestamosService} prestamosService - Servicio para gestionar los préstamos.
+   */
   constructor(
-    private resourceService: ResourceService, // Inyectar ResourceService
-    private prestamosService: PrestamosService // Inyectar PrestamosService
+    private resourceService: ResourceService, 
+    private prestamosService: PrestamosService 
   ) { }
 
+  /**
+   * @description Hook del ciclo de vida de Angular que se ejecuta después de que el componente
+   * haya sido inicializado. Carga los recursos disponibles.
+   * @returns {void}
+   */
   ngOnInit(): void {
     this.loadAvailableResources(); // Cargar recursos al iniciar el componente
   }
 
   /**
-   * Carga los recursos disponibles (con cualquier estado menos 'prestado') desde el servicio.
+   * @description Carga los recursos disponibles desde el `ResourceService`.
+   * Solo incluye recursos cuyo estado no es 'prestado'.
+   * Actualiza la propiedad `recursosDisponibles`.
+   * @returns {void}
    */
   loadAvailableResources(): void {
     this.resourceService.getResources().subscribe(
@@ -62,10 +132,13 @@ export class CrearPrestamoComponent implements OnInit{
     );
   }
 
-/**
-   * Maneja el evento 'input' del campo de texto del recurso asociado.
-   * Filtra los recursos disponibles basándose en lo que el usuario escribe.
-   */
+  /**
+     * @description Maneja el evento `input` del campo de texto de selección de recurso.
+     * Filtra `recursosDisponibles` para poblar `filteredRecursos` basándose en el texto
+     * ingresado por el usuario (modelo o número de serie).
+     * Controla la visibilidad de las sugerencias y resetea el `recursoId` si no hay coincidencia exacta.
+     * @returns {void}
+     */
   onRecursoInput(): void {
     this.isInvalidRecursoSelection = false; // Resetear la bandera de validación
     const searchText = this.selectedRecursoText.toLowerCase().trim();
@@ -99,8 +172,11 @@ export class CrearPrestamoComponent implements OnInit{
   }
 
   /**
-   * Maneja la selección de un recurso de la lista de sugerencias.
-   * @param recurso El recurso seleccionado.
+   * @description Maneja la selección de un recurso de la lista de sugerencias.
+   * Actualiza `selectedRecursoText` y `newLoan.recursoId` con la información del recurso seleccionado.
+   * Oculta las sugerencias y resetea la validación de selección.
+   * @param {Recurso} recurso - El objeto `Recurso` seleccionado por el usuario.
+   * @returns {void}
    */
   selectRecurso(recurso: Recurso): void {
     // Establecer el texto del input con el nombre completo del recurso
@@ -113,8 +189,10 @@ export class CrearPrestamoComponent implements OnInit{
   }
 
   /**
-   * Maneja el evento 'blur' (cuando el input pierde el foco).
-   * Oculta las sugerencias y valida la selección si no se ha elegido un recurso válido.
+   * @description Maneja el evento `blur` (cuando el input de recurso pierde el foco).
+   * Oculta las sugerencias después de un pequeño retardo y valida si se seleccionó un recurso válido.
+   * Si hay texto en el input pero `newLoan.recursoId` es 0, marca la selección como inválida.
+   * @returns {void}
    */
   onRecursoBlur(): void {
     // Usar un pequeño retardo para permitir que el evento click en la sugerencia se dispare
@@ -130,7 +208,12 @@ export class CrearPrestamoComponent implements OnInit{
   }
 
 
-  //Metodo para validar las fechas de préstamo y devolución
+  /**
+   * @description Valida las fechas de préstamo y devolución.
+   * Establece `fechasPrestamoInvalidas` en `true` si la fecha de devolución es anterior
+   * a la fecha de préstamo.
+   * @returns {void}
+   */
   validateLoanDates(): void {
     this.fechasPrestamoInvalidas = false; // Resetear el estado de error
 
@@ -147,7 +230,12 @@ export class CrearPrestamoComponent implements OnInit{
   }
 
   /**
-   * Maneja el envío del formulario para crear un nuevo préstamo.
+   * @description Maneja el envío del formulario para crear un nuevo préstamo.
+   * Realiza validaciones finales antes de intentar guardar el préstamo.
+   * Si las validaciones son exitosas, llama al `PrestamosService` para guardar el préstamo,
+   * emite el evento `loanCreated` y resetea el formulario.
+   * Muestra alertas de éxito o error al usuario.
+   * @returns {void}
    */
   createLoan(): void {
     
@@ -165,7 +253,7 @@ export class CrearPrestamoComponent implements OnInit{
     }
 
     // Marca que la operación está en curso
-    this.isLoading = true; // **Activamos el estado de carga**
+    this.isLoading = true; 
 
     this.prestamosService.saveLoan(this.newLoan).subscribe({
       next: (response) => {
@@ -184,7 +272,10 @@ export class CrearPrestamoComponent implements OnInit{
   }
 
   /**
-   * Resetea el formulario a sus valores iniciales.
+   * @description Resetea el formulario de creación de préstamo a su estado inicial.
+   * Limpia los campos del formulario, las banderas de validación, las sugerencias y
+   * recarga los recursos disponibles.
+   * @returns {void}
    */
   resetForm(): void {
     this.newLoan = {
@@ -200,9 +291,9 @@ export class CrearPrestamoComponent implements OnInit{
     this.filteredRecursos = []; // Limpiar las sugerencias filtradas
     this.showSuggestions = false; // Ocultar las sugerencias
 
-    // **Reinicia el estado de validación del formulario utilizando NgForm**
+    // Reinicia el estado de validación del formulario utilizando NgForm
     if (this.loanForm) {
-      this.loanForm.resetForm(this.newLoan); // **Esta línea es crucial**
+      this.loanForm.resetForm(this.newLoan); 
     }
     this.loadAvailableResources();
   }
