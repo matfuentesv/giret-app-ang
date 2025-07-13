@@ -72,7 +72,7 @@ export class ResourceService {
   getHistorialByResourceId(recursoId: number) {
     throw new Error('Method not implemented.');
   }
-  private baseUrl = 'http://52.54.77.191:8085/bff'; // URL base para los recursos
+  private baseUrl = 'https://f21t3uora4.execute-api.us-east-1.amazonaws.com'; // URL base para los recursos
   
   /**
    * @description Constructor del servicio ResourceService.
