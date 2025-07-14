@@ -3,6 +3,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CrearPrestamoComponent } from '../crear-prestamo/crear-prestamo.component';
 import { PrestamosService, Loan } from '../../services/prestamos.service'; 
 import { FormsModule } from '@angular/forms'; 
+import Swal from 'sweetalert2';
 
 declare var bootstrap: any;
 
@@ -218,7 +219,12 @@ export class PrestamosComponent implements OnInit {
   registerReturn(loanId: number | undefined): void {
     if (loanId === undefined) {
       console.error('ID del préstamo no definido para la devolución.');
-      alert('Error: No se pudo registrar la devolución. ID del préstamo no disponible.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo registrar la devolución. ID del préstamo no disponible.',
+        confirmButtonText: 'Aceptar'
+      });
       return;
     }
 
@@ -226,28 +232,54 @@ export class PrestamosComponent implements OnInit {
 
     if (!loanToUpdate) {
       console.error('Préstamo no encontrado en la lista para el ID:', loanId);
-      alert('Error: No se encontró el préstamo para registrar la devolución.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se encontró el préstamo para registrar la devolución.',
+        confirmButtonText: 'Aceptar'
+      });
       return;
     }
 
-    if (!confirm('¿Estás seguro de que quieres registrar este préstamo como devuelto?')) {
-      return; 
-    }
-
-    this.prestamosService.updateLoanState(loanId, loanToUpdate.recursoId, 'devuelto').subscribe({
-      next: (success: boolean) => { 
-        if (success) {
-          console.log('Préstamo actualizado a devuelto con éxito.');
-          alert('Préstamo registrado como devuelto con éxito!');
-          this.getLoans(); 
-        } else {
-          console.warn('La actualización del préstamo no fue exitosa (el backend devolvió false).');
-          alert('Hubo un problema al registrar la devolución. Intente de nuevo.');
-        }
-      },
-      error: (error) => {
-        console.error('Error al registrar la devolución del préstamo:', error);
-        alert('Hubo un error al registrar la devolución. Por favor, revisa la consola.');
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Quieres registrar este préstamo como devuelto?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, devolverlo',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.prestamosService.updateLoanState(loanId, loanToUpdate.recursoId, 'devuelto').subscribe({
+          next: (success: boolean) => {
+            if (success) {
+              console.log('Préstamo actualizado a devuelto con éxito.');
+              Swal.fire(
+                '¡Devuelto!',
+                'El préstamo ha sido registrado como devuelto con éxito.',
+                'success'
+              );
+              this.getLoans();
+            } else {
+              console.warn('La actualización del préstamo no fue exitosa (el backend devolvió false).');
+              Swal.fire(
+                'Problema',
+                'Hubo un problema al registrar la devolución. Intenta de nuevo.',
+                'error'
+              );
+            }
+          },
+          error: (error) => {
+            console.error('Error al registrar la devolución del préstamo:', error);
+            Swal.fire(
+              'Error',
+              'Hubo un error al registrar la devolución. Por favor, revisa la consola.',
+              'error'
+            );
+          }
+        });
       }
     });
   }

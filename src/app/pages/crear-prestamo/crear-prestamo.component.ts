@@ -3,6 +3,7 @@ import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/cor
 import { FormsModule, NgForm } from '@angular/forms';
 import { Recurso, ResourceService } from '../../services/resource.service';
 import { Loan, PrestamosService } from '../../services/prestamos.service';
+import Swal from 'sweetalert2';
 
 /**
  * @fileoverview Este componente permite a los usuarios crear nuevos préstamos de recursos.
@@ -257,15 +258,23 @@ export class CrearPrestamoComponent implements OnInit{
 
     this.prestamosService.saveLoan(this.newLoan).subscribe({
       next: (response) => {
-        console.log('Préstamo creado con éxito:', response);
-        alert('Préstamo registrado con éxito!');
+        Swal.fire({
+          icon: 'success',
+          title: '¡Préstamo Registrado!',
+          text: 'El préstamo ha sido creado y el recurso actualizado.',
+          confirmButtonText: 'Aceptar'
+        });
         this.loanCreated.emit(); // Notificar al componente padre
         this.resetForm(); // Limpiar el formulario
         this.isLoading = false; 
       },
       error: (error) => {
-        console.error('Error al crear el préstamo:', error);
-        alert('Hubo un error al registrar el préstamo. Por favor, intente de nuevo.');
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al Registrar Préstamo',
+          text: 'Hubo un error al crear el préstamo. Por favor, inténtalo de nuevo.',
+          confirmButtonText: 'Aceptar'
+        });
         this.isLoading = false;
       }
     });

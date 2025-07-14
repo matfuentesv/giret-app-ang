@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Recurso, ResourceService } from '../../services/resource.service';
+import Swal from 'sweetalert2'; // Import SweetAlert2
 
 /**
  * @fileoverview Este componente `EditarRecursoComponent` permite a los usuarios editar
@@ -99,19 +100,36 @@ export class EditarRecursoComponent {
    * @returns {void}
    */
   saveChanges(): void {
-    if (this.editedRecurso.idRecurso) { // Asegurarse de que el recurso tenga un ID para actualizar
+    if (this.editedRecurso.idRecurso) { 
       this.resourceService.updateResource(this.editedRecurso.idRecurso, this.editedRecurso).subscribe({
         next: (updatedRecurso) => {
-          console.log('Recurso actualizado con éxito:', updatedRecurso);
+          Swal.fire({ 
+            icon: 'success',
+            title: '¡Éxito!',
+            text: 'El recurso ha sido actualizado correctamente.',
+            confirmButtonText: 'Aceptar'
+          });
           this.resourceUpdated.emit(updatedRecurso); // Emitir el evento de que el recurso fue actualizado
           this.closeModal(); // Cerrar el modal después de guardar
         },
         error: (error) => {
+          Swal.fire({ 
+            icon: 'error',
+            title: 'Error',
+            text: 'Hubo un problema al actualizar el recurso. Por favor, inténtalo de nuevo.',
+            confirmButtonText: 'Aceptar'
+          });
           console.error('Error al actualizar el recurso:', error);
            this.closeModal()
         }
       });
     } else {
+      Swal.fire({ 
+        icon: 'warning',
+        title: 'Advertencia',
+        text: 'No se puede actualizar el recurso: ID de recurso no definido.',
+        confirmButtonText: 'Aceptar'
+      });
       console.warn('No se puede actualizar el recurso: idRecurso no definido.');
        this.closeModal()
     }

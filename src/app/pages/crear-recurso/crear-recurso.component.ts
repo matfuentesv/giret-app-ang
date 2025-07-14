@@ -4,6 +4,8 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { ResourceService, Recurso } from '../../services/resource.service';
 import { Subscription } from 'rxjs';
 import { CognitoService } from '../../auth/cognito.service';
+import Swal from 'sweetalert2';
+
 
 /**
  * @fileoverview Este componente permite a los usuarios crear nuevos recursos.
@@ -143,19 +145,34 @@ export class CrearRecursoComponent implements OnInit{
 
     this.resourceService.saveResource(this.newRecurso).subscribe({
       next: (response) => {
-        alert('Recurso agregado correctamente!');
+        Swal.fire({
+          icon: 'success',
+          title: '¡Recurso Creado!',
+          text: 'El recurso ha sido agregado correctamente.',
+          confirmButtonText: 'Aceptar'
+        });
         if (response.idRecurso && this.selectedFiles.length > 0) {
           this.selectedFiles.forEach(file => {
             this.resourceService.uploadDocument(file, response.idRecurso!).subscribe({
               next: (uploadedDoc) => {
               },
               error: (uploadError) => {
-                alert(`Error al subir el documento ${file.name}.`);
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error de Subida',
+                  text: `Error al subir el documento ${file.name}.`,
+                  confirmButtonText: 'Aceptar'
+                });
               }
             });
           });
         } else if (this.selectedFiles.length > 0 && !response.idRecurso) {
-            alert('Recurso creado, pero no se pudieron subir los documentos asociados.');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Advertencia',
+                text: 'Recurso creado, pero no se pudieron subir los documentos asociados.',
+                confirmButtonText: 'Aceptar'
+            });
         }
         this.resourceCreated.emit();
         this.resetForm();
@@ -163,7 +180,12 @@ export class CrearRecursoComponent implements OnInit{
         this.isLoading = false; 
       },
       error: (error) => {
-        alert('Hubo un error al agregar el recurso. Por favor, revisa la consola.');
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al Crear Recurso',
+          text: 'Hubo un error al agregar el recurso. Por favor, revisa la consola para más detalles.',
+          confirmButtonText: 'Aceptar'
+        });
         this.isLoading = false; 
       }
     });
