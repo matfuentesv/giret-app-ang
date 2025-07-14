@@ -353,20 +353,25 @@ export class ReportesComponent implements OnInit {
       return '';
     }
 
-    let csv = '';
+    // BOM para UTF-8: Esto le dice a las aplicaciones (como Excel) que el archivo está en UTF-8.
+    // Es crucial para que los caracteres especiales y acentos se muestren correctamente.
+    const utf8Bom = '\ufeff'; 
+
+    let csv = utf8Bom; // Inicia el CSV con el BOM
     const headers: string[] = [];
+    const columnSeparator = ';'; 
 
     if (this.isResourceReport(this.currentReportTitle)) {
-      csv += 'ID,Modelo,No. Serie,Categoría,Estado,Email Usuario,Fecha Garantía\n';
+      csv += `ID${columnSeparator}Modelo${columnSeparator}No. Serie${columnSeparator}Categoría${columnSeparator}Estado${columnSeparator}Email Usuario${columnSeparator}Fecha Garantía\n`;
       headers.push('idRecurso', 'modelo', 'numeroSerie', 'categoria', 'estado', 'emailUsuario', 'fechaVencimientoGarantia');
     } else if (this.isLoanReport(this.currentReportTitle)) {
-      csv += 'Recurso,Solicitante,Fecha Préstamo,Fecha Devolución,Estado\n';
+      csv += `Recurso${columnSeparator}Solicitante${columnSeparator}Fecha Préstamo${columnSeparator}Fecha Devolución${columnSeparator}Estado\n`;
       headers.push('resource', 'solicitante', 'fechaPrestamo', 'fechaDevolucion', 'estado');
     } else {
       const firstItem = this.reportData[0];
       for (const key in firstItem) {
         if (Object.prototype.hasOwnProperty.call(firstItem, key)) {
-          csv += `"${key}",`;
+          csv += `"${key}"${columnSeparator}`;
           headers.push(key);
         }
       }
@@ -384,15 +389,13 @@ export class ReportesComponent implements OnInit {
         } else if (header === 'fechaPrestamo' || header === 'fechaDevolucion' || header === 'fechaVencimientoGarantia') {
           row.push(`"${this.formatDate(value || '')}"`);
         } else if (header === 'estado') {
-          
           row.push(`"${this.getTitleCase(value || '')}"`);
         } else {
-          
           const stringValue = (value === undefined || value === null) ? '' : String(value);
           row.push(`"${stringValue.replace(/"/g, '""')}"`); 
         }
       });
-      csv += row.join(',') + '\n';
+      csv += row.join(columnSeparator) + '\n';
     });
 
     return csv;

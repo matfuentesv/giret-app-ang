@@ -10,7 +10,6 @@
       <option value="Audio y Video">Audio y Video</option>
       <option value="Redes">Redes</option>
       <option value="Software">Software</option>
-      <option value="Otros">Otros</option>
     </select>
     <div *ngIf="categoria.invalid && (categoria.dirty || categoria.touched)" class="text-danger">
       <div *ngIf="categoria.errors?.['required']">La categoría es requerida.</div>
@@ -73,16 +72,7 @@
 
   <div class="mb-3">
     <label for="estado" class="form-label">Estado</label>
-    <select id="estado" name="estado" class="form-select" [(ngModel)]="newRecurso.estado" required #estado="ngModel">
-      <option value="Bodega">En Bodega</option>
-      <option value="prestado">Prestado</option>
-      <option value="asignado">Asignado</option>
-      <option value="mantenimiento">En Mantenimiento</option>
-      <option value="eliminado">Eliminado</option>
-    </select>
-    <div *ngIf="estado.invalid && (estado.dirty || estado.touched)" class="text-danger">
-      <div *ngIf="estado.errors?.['required']">El estado es requerido.</div>
-    </div>
+    <input type="text" id="estado" name="estado" class="form-control" [(ngModel)]="newRecurso.estado" readonly>
   </div>
 
   <div class="mb-3">

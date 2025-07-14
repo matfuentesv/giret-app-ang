@@ -108,10 +108,12 @@ export class EditarRecursoComponent {
         },
         error: (error) => {
           console.error('Error al actualizar el recurso:', error);
+           this.closeModal()
         }
       });
     } else {
       console.warn('No se puede actualizar el recurso: idRecurso no definido.');
+       this.closeModal()
     }
   }
 

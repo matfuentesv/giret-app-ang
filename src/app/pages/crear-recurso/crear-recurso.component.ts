@@ -31,7 +31,7 @@ export class CrearRecursoComponent implements OnInit{
     fechaCompra: '',
     fechaVencimientoGarantia: '',
     emailUsuario: '',
-    estado: 'En Bodega',
+    estado: 'Bodega',
     categoria: ''
   };
 
